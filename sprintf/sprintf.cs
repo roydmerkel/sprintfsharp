@@ -401,7 +401,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(uchval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(uchval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -412,7 +412,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(chval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(chval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -471,7 +471,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(ushval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(ushval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -482,7 +482,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(shval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(shval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -543,7 +543,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(ulval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(ulval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -554,7 +554,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(lval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(lval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -615,7 +615,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(ulval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(ulval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -626,7 +626,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(lval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(lval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -687,7 +687,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(ullval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(ullval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -698,7 +698,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(llval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(llval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -759,7 +759,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(ustval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(ustval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -770,7 +770,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(stval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(stval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -830,7 +830,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(ustval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(ustval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -841,7 +841,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(stval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(stval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -901,7 +901,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(uimxval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(uimxval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -912,7 +912,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(imxval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(imxval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -973,7 +973,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(updval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(updval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -984,7 +984,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(pdval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(pdval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -1044,7 +1044,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(updval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(updval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -1055,7 +1055,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(pdval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(pdval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -1115,7 +1115,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(uqval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(uqval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -1126,7 +1126,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(qval.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(qval.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -1187,7 +1187,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(updval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(updval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -1198,7 +1198,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(pdval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(pdval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -1258,7 +1258,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(updval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(updval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -1269,7 +1269,7 @@ namespace sprintf
                         {
                             if (groupDigits)
                             {
-                                valStr = new StringBuilder(pdval.ToString(Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(pdval.ToString("N0", Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
@@ -1329,7 +1329,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(ui32val.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(ui32val.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -1340,7 +1340,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(i32val.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(i32val.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -1398,7 +1398,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(ui64val.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(ui64val.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -1409,7 +1409,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(i64val.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(i64val.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -1468,7 +1468,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(uival.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(uival.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {
@@ -1479,7 +1479,7 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
-                            valStr = new StringBuilder(ival.ToString(Sprintf.currentCultureNumberFormat));
+                            valStr = new StringBuilder(ival.ToString("N0", Sprintf.currentCultureNumberFormat));
                         }
                         else
                         {

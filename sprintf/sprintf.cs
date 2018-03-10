@@ -1841,38 +1841,6 @@ namespace sprintf
                         int prec = 0;
                         int widt = 0;
 
-                        if (hasPrecision)
-                        {
-                            if (precisionStar)
-                            {
-                                if (!hasArg)
-                                {
-                                    return null;
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        prec = int.Parse(argsIter.Current.ToString());
-                                    }
-                                    catch (Exception)
-                                    {
-                                    }
-                                    hasArg = argsIter.MoveNext();
-                                }
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    prec = int.Parse(precision.ToString());
-                                }
-                                catch (Exception)
-                                {
-                                }
-                            }
-                        }
-
                         if (hasWidth)
                         {
                             if (widthStar)
@@ -1898,6 +1866,38 @@ namespace sprintf
                                 try
                                 {
                                     widt = int.Parse(width.ToString());
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
+
+                        if (hasPrecision)
+                        {
+                            if (precisionStar)
+                            {
+                                if (!hasArg)
+                                {
+                                    return null;
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        prec = int.Parse(argsIter.Current.ToString());
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                    hasArg = argsIter.MoveNext();
+                                }
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    prec = int.Parse(precision.ToString());
                                 }
                                 catch (Exception)
                                 {
@@ -1936,7 +1936,7 @@ namespace sprintf
                                         valStr.Remove(0, 1);
                                     }
 
-                                    if (valStr.Length == 1 && valStr[0] == '0' && prec == 0)
+                                    if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
                                     {
                                         valStr.Clear();
                                     }

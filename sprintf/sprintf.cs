@@ -1936,7 +1936,7 @@ namespace sprintf
                                         valStr.Remove(0, 1);
                                     }
 
-                                    if (valStr.Equals("0") && prec == 0)
+                                    if (valStr.Length == 1 && valStr[0] == '0' && prec == 0)
                                     {
                                         valStr.Clear();
                                     }

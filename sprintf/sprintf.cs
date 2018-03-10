@@ -2097,6 +2097,7 @@ namespace sprintf
                                 }
                                 else
                                 {
+                                    bool isUpper = (ch == 'X');
                                     object arg = argsIter.Current;
                                     hasArg = argsIter.MoveNext();
                                     if (arg == null)
@@ -2110,7 +2111,7 @@ namespace sprintf
                                         return null;
                                     }
 
-                                    if (valStr.Equals("0") && prec == 0)
+                                    if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
                                     {
                                         valStr.Clear();
                                     }
@@ -2147,7 +2148,10 @@ namespace sprintf
                                         valStr.Insert(0, "0x");
                                     }
 
-                                    Sprintf.Capitalize(ref valStr);
+                                    if (isUpper)
+                                    {
+                                        Sprintf.Capitalize(ref valStr);
+                                    }
 
                                     if (minusFlag)
                                     {

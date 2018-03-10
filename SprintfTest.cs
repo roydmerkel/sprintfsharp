@@ -403,5 +403,267 @@ namespace testsprintf
             s = Sprintf.sprintf("%#ho", 32767);
             Assert.AreEqual(s, "077777");
         }
+
+        [Test]
+        public void TestPercentx()
+        {
+            String s;
+            s = Sprintf.sprintf("%x", 1);
+            Assert.AreEqual(s, "1");
+
+            s = Sprintf.sprintf("%0x", 1);
+            Assert.AreEqual(s, "1");
+
+            s = Sprintf.sprintf("%010x", 1);
+            Assert.AreEqual(s, "0000000001");
+
+            s = Sprintf.sprintf("%+010x", 1);
+            Assert.AreEqual(s, "0000000001");
+
+            s = Sprintf.sprintf("%-+010x", 1);
+            Assert.AreEqual(s, "1         ");
+
+            s = Sprintf.sprintf("% 010x", 1);
+            Assert.AreEqual(s, "0000000001");
+
+            s = Sprintf.sprintf("% 10x", 1);
+            Assert.AreEqual(s, "         1");
+
+            s = Sprintf.sprintf("%010.5x", 1);
+            Assert.AreEqual(s, "     00001");
+
+            s = Sprintf.sprintf("%+010.5x", 1);
+            Assert.AreEqual(s, "     00001");
+
+            s = Sprintf.sprintf("%+-010.5x", 1);
+            Assert.AreEqual(s, "00001     ");
+
+            s = Sprintf.sprintf("%+-'010.5x", 1);
+            Assert.AreEqual(s, "00001     ");
+
+            s = Sprintf.sprintf("%+-'010.5x", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5hx", 32767);
+            Assert.AreEqual(s, "7,fff     ");
+
+            s = Sprintf.sprintf("%+-'010.5hhx", 127);
+            Assert.AreEqual(s, "0007f     ");
+
+            s = Sprintf.sprintf("%+-'010.5lx", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5llx", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5zx", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5jx", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5tx", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5qx", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5Ix", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5I32x", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'010.5I64x", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'020.5I64x", 1000000000);
+            Assert.AreEqual(s, "3b,9ac,a00          ");
+
+            s = Sprintf.sprintf("%+'020.5I64x", 1000000000);
+            Assert.AreEqual(s, "          3b,9ac,a00");
+
+            s = Sprintf.sprintf("%+-'020.0x", 0);
+            Assert.AreEqual(s, "                    ");
+
+            s = Sprintf.sprintf("%+'020.0x", 0);
+            Assert.AreEqual(s, "                    ");
+
+            s = Sprintf.sprintf("%+'0*.*x", 20, 0, 0);
+            Assert.AreEqual(s, "                    ");
+
+            s = Sprintf.sprintf("ab%+'0*.*xcd", 20, 0, 0);
+            Assert.AreEqual(s, "ab                    cd");
+
+            s = Sprintf.sprintf("\"%x\"\n", 0);
+            Assert.AreEqual(s, "\"0\"\n");
+
+            s = Sprintf.sprintf("\"%+0*x\"\n", 20, 0);
+            Assert.AreEqual(s, "\"00000000000000000000\"\n");
+
+            s = Sprintf.sprintf("%hhx", 255);
+            Assert.AreEqual(s, "ff");
+
+            s = Sprintf.sprintf("%hhx", -128);
+            Assert.AreEqual(s, "80");
+
+            s = Sprintf.sprintf("%010hhx", -128);
+            Assert.AreEqual(s, "0000000080");
+
+            s = Sprintf.sprintf("%0.10hhx", -128);
+            Assert.AreEqual(s, "0000000080");
+
+            s = Sprintf.sprintf("%020.10hhx", -128);
+            Assert.AreEqual(s, "          0000000080");
+
+            s = Sprintf.sprintf("%'#020.5hx", 32767);
+            Assert.AreEqual(s, "             0x7,fff");
+
+            s = Sprintf.sprintf("%'#020.10hx", 32767);
+            Assert.AreEqual(s, "        0x000007,fff");
+
+            s = Sprintf.sprintf("%'#hx", 32767);
+            Assert.AreEqual(s, "0x7,fff");
+
+            s = Sprintf.sprintf("%#020.5hx", 32767);
+            Assert.AreEqual(s, "             0x07fff");
+
+            s = Sprintf.sprintf("%#020.10hx", 32767);
+            Assert.AreEqual(s, "        0x0000007fff");
+
+            s = Sprintf.sprintf("%#hx", 32767);
+            Assert.AreEqual(s, "0x7fff");
+        }
+
+        [Test]
+        public void TestPercentX()
+        {
+            String s;
+            s = Sprintf.sprintf("%X", 1);
+            Assert.AreEqual(s, "1");
+
+            s = Sprintf.sprintf("%0X", 1);
+            Assert.AreEqual(s, "1");
+
+            s = Sprintf.sprintf("%010X", 1);
+            Assert.AreEqual(s, "0000000001");
+
+            s = Sprintf.sprintf("%+010X", 1);
+            Assert.AreEqual(s, "0000000001");
+
+            s = Sprintf.sprintf("%-+010X", 1);
+            Assert.AreEqual(s, "1         ");
+
+            s = Sprintf.sprintf("% 010X", 1);
+            Assert.AreEqual(s, "0000000001");
+
+            s = Sprintf.sprintf("% 10X", 1);
+            Assert.AreEqual(s, "         1");
+
+            s = Sprintf.sprintf("%010.5X", 1);
+            Assert.AreEqual(s, "     00001");
+
+            s = Sprintf.sprintf("%+010.5X", 1);
+            Assert.AreEqual(s, "     00001");
+
+            s = Sprintf.sprintf("%+-010.5X", 1);
+            Assert.AreEqual(s, "00001     ");
+
+            s = Sprintf.sprintf("%+-'010.5X", 1);
+            Assert.AreEqual(s, "00001     ");
+
+            s = Sprintf.sprintf("%+-'010.5X", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5hX", 32767);
+            Assert.AreEqual(s, "7,FFF     ");
+
+            s = Sprintf.sprintf("%+-'010.5hhX", 127);
+            Assert.AreEqual(s, "0007F     ");
+
+            s = Sprintf.sprintf("%+-'010.5lX", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5llX", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5zX", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5jX", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5tX", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5qX", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5IX", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5I32X", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'010.5I64X", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'020.5I64X", 1000000000);
+            Assert.AreEqual(s, "3B,9AC,A00          ");
+
+            s = Sprintf.sprintf("%+'020.5I64X", 1000000000);
+            Assert.AreEqual(s, "          3B,9AC,A00");
+
+            s = Sprintf.sprintf("%+-'020.0X", 0);
+            Assert.AreEqual(s, "                    ");
+
+            s = Sprintf.sprintf("%+'020.0X", 0);
+            Assert.AreEqual(s, "                    ");
+
+            s = Sprintf.sprintf("%+'0*.*X", 20, 0, 0);
+            Assert.AreEqual(s, "                    ");
+
+            s = Sprintf.sprintf("ab%+'0*.*Xcd", 20, 0, 0);
+            Assert.AreEqual(s, "ab                    cd");
+
+            s = Sprintf.sprintf("\"%X\"\n", 0);
+            Assert.AreEqual(s, "\"0\"\n");
+
+            s = Sprintf.sprintf("\"%+0*X\"\n", 20, 0);
+            Assert.AreEqual(s, "\"00000000000000000000\"\n");
+
+            s = Sprintf.sprintf("%hhX", 255);
+            Assert.AreEqual(s, "FF");
+
+            s = Sprintf.sprintf("%hhX", -128);
+            Assert.AreEqual(s, "80");
+
+            s = Sprintf.sprintf("%010hhX", -128);
+            Assert.AreEqual(s, "0000000080");
+
+            s = Sprintf.sprintf("%0.10hhX", -128);
+            Assert.AreEqual(s, "0000000080");
+
+            s = Sprintf.sprintf("%020.10hhX", -128);
+            Assert.AreEqual(s, "          0000000080");
+
+            s = Sprintf.sprintf("%'#020.5hX", 32767);
+            Assert.AreEqual(s, "             0X7,FFF");
+
+            s = Sprintf.sprintf("%'#020.10hX", 32767);
+            Assert.AreEqual(s, "        0X000007,FFF");
+
+            s = Sprintf.sprintf("%'#hX", 32767);
+            Assert.AreEqual(s, "0X7,FFF");
+
+            s = Sprintf.sprintf("%#020.5hX", 32767);
+            Assert.AreEqual(s, "             0X07FFF");
+
+            s = Sprintf.sprintf("%#020.10hX", 32767);
+            Assert.AreEqual(s, "        0X0000007FFF");
+
+            s = Sprintf.sprintf("%#hX", 32767);
+            Assert.AreEqual(s, "0X7FFF");
+        }
     }
 }

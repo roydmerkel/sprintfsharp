@@ -111,12 +111,22 @@ namespace sprintf
             {
                 lastn = n;
 
+                if (substrlength - n <= 0)
+                {
+                    break;
+                }
+
                 val.Insert(substrlength - n, numberGroupSeparator);
                 substrlength -= n;
             }
 
             while (lastn > 0 && substrlength > lastn)
             {
+                if (substrlength - lastn <= 0)
+                {
+                    break;
+                }
+
                 val.Insert(substrlength - lastn, numberGroupSeparator);
                 substrlength -= lastn;
             }
@@ -2179,7 +2189,7 @@ namespace sprintf
                                         return null;
                                     }
 
-                                    if (valStr.Equals("0") && prec == 0)
+                                    if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
                                     {
                                         valStr.Clear();
                                     }

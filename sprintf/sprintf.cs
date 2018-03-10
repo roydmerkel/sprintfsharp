@@ -2020,7 +2020,7 @@ namespace sprintf
                                         return null;
                                     }
 
-                                    if (valStr.Equals("0") && prec == 0)
+                                    if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
                                     {
                                         valStr.Clear();
                                     }
@@ -2034,10 +2034,29 @@ namespace sprintf
 
                                     if (!hasPrecision && !minusFlag && zeroFlag)
                                     {
-                                        while (valStr.Length < widt)
+                                        if (plusFlag || spaceFlag)
                                         {
-                                            valStr.Insert(0, '0');
+                                            while (valStr.Length < widt - 1)
+                                            {
+                                                valStr.Insert(0, '0');
+                                            }
                                         }
+                                        else
+                                        {
+                                            while (valStr.Length < widt)
+                                            {
+                                                valStr.Insert(0, '0');
+                                            }
+                                        }
+                                    }
+
+                                    if (plusFlag)
+                                    {
+                                        valStr.Insert(0, '+');
+                                    }
+                                    else if (spaceFlag)
+                                    {
+                                        valStr.Insert(0, ' ');
                                     }
 
                                     if (minusFlag)

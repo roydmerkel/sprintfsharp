@@ -665,5 +665,12 @@ namespace testsprintf
             s = Sprintf.sprintf("%#hX", 32767);
             Assert.AreEqual(s, "0X7FFF");
         }
+
+        [Test]
+        public void TestPercentPercent()
+        {
+            String s = Sprintf.sprintf("%%");
+            Assert.AreEqual(s, "%");
+        }
     }
 }

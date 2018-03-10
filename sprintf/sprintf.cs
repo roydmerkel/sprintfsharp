@@ -2195,9 +2195,19 @@ namespace sprintf
                                     }
                                     else
                                     {
-                                        while (valStr.Length < prec)
+                                        if (hashFlag)
                                         {
-                                            valStr.Insert(0, '0');
+                                            while (valStr.Length < prec - 1)
+                                            {
+                                                valStr.Insert(0, '0');
+                                            }
+                                        }
+                                        else
+                                        {
+                                            while (valStr.Length < prec)
+                                            {
+                                                valStr.Insert(0, '0');
+                                            }
                                         }
                                     }
 

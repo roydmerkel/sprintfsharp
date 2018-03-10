@@ -122,6 +122,24 @@ namespace testsprintf
 
             s = Sprintf.sprintf("%020.10hhd", -128);
             Assert.AreEqual(s, "         -0000000128");
+
+            s = Sprintf.sprintf("%'#020.5hd", 32767);
+            Assert.AreEqual(s, "              32,767");
+
+            s = Sprintf.sprintf("%'#020.10hd", 32767);
+            Assert.AreEqual(s, "          000032,767");
+
+            s = Sprintf.sprintf("%'#hd", 32767);
+            Assert.AreEqual(s, "32,767");
+
+            s = Sprintf.sprintf("%#020.5hd", 32767);
+            Assert.AreEqual(s, "               32767");
+
+            s = Sprintf.sprintf("%#020.10hd", 32767);
+            Assert.AreEqual(s, "          0000032767");
+
+            s = Sprintf.sprintf("%#hd", 32767);
+            Assert.AreEqual(s, "32767");
         }
 
         [Test]
@@ -235,6 +253,24 @@ namespace testsprintf
 
             s = Sprintf.sprintf("%020.10hhu", -128);
             Assert.AreEqual(s, "          0000000128");
+
+            s = Sprintf.sprintf("%'#020.5hu", 32767);
+            Assert.AreEqual(s, "              32,767");
+
+            s = Sprintf.sprintf("%'#020.10hu", 32767);
+            Assert.AreEqual(s, "          000032,767");
+
+            s = Sprintf.sprintf("%'#hu", 32767);
+            Assert.AreEqual(s, "32,767");
+
+            s = Sprintf.sprintf("%#020.5hu", 32767);
+            Assert.AreEqual(s, "               32767");
+
+            s = Sprintf.sprintf("%#020.10hu", 32767);
+            Assert.AreEqual(s, "          0000032767");
+
+            s = Sprintf.sprintf("%#hu", 32767);
+            Assert.AreEqual(s, "32767");
         }
 
         [Test]
@@ -348,6 +384,24 @@ namespace testsprintf
 
             s = Sprintf.sprintf("%020.10hho", -128);
             Assert.AreEqual(s, "          0000000200");
+
+            s = Sprintf.sprintf("%'#020.5ho", 32767);
+            Assert.AreEqual(s, "             077,777");
+
+            s = Sprintf.sprintf("%'#020.10ho", 32767);
+            Assert.AreEqual(s, "          000077,777");
+
+            s = Sprintf.sprintf("%'#ho", 32767);
+            Assert.AreEqual(s, "077,777");
+
+            s = Sprintf.sprintf("%#020.5ho", 32767);
+            Assert.AreEqual(s, "              077777");
+
+            s = Sprintf.sprintf("%#020.10ho", 32767);
+            Assert.AreEqual(s, "          0000077777");
+
+            s = Sprintf.sprintf("%#ho", 32767);
+            Assert.AreEqual(s, "077777");
         }
     }
 }

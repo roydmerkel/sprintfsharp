@@ -145,7 +145,6 @@ namespace sprintf
         private static StringBuilder SprintfParseFloatArg(bool groupDigits, bool scientificNotation, bool decimalFloatingPoint, object arg, string length, bool hasPrec, int prec, out bool isInf, out bool isNAN)
         {
             StringBuilder valStr;
-            float f;
             double d;
 
             isInf = false;
@@ -157,19 +156,11 @@ namespace sprintf
                     /* TODO: find a c# long double type, one doesn't seem to exist... */
                     try
                     {
-                        f = Convert.ToSingle(arg);
-                        d = (double)f;
+                        d = Convert.ToDouble(arg);
                     }
                     catch (Exception)
                     {
-                        try
-                        {
-                            d = Convert.ToDouble(arg);
-                        }
-                        catch (Exception)
-                        {
-                            return null;
-                        }
+                        return null;
                     }
 
                     if (double.IsNegativeInfinity(d))
@@ -328,19 +319,11 @@ namespace sprintf
                 case "":
                     try
                     {
-                        f = Convert.ToSingle(arg);
-                        d = (double)f;
+                        d = Convert.ToDouble(arg);
                     }
                     catch (Exception)
                     {
-                        try
-                        {
-                            d = Convert.ToDouble(arg);
-                        }
-                        catch (Exception)
-                        {
-                            return null;
-                        }
+                        return null;
                     }
 
                     if (double.IsNegativeInfinity(d))
@@ -2509,7 +2492,6 @@ namespace sprintf
                                         return null;
                                     }
 
-                                    float f;
                                     double d;
 
                                     switch (length.ToString())
@@ -2518,38 +2500,22 @@ namespace sprintf
                                             /* TODO: find a c# long double type, one doesn't seem to exist... */
                                             try
                                             {
-                                                f = Convert.ToSingle(arg);
-                                                d = (double)f;
+                                                d = Convert.ToDouble(arg);
                                             }
                                             catch (Exception)
                                             {
-                                                try
-                                                {
-                                                    d = Convert.ToDouble(arg);
-                                                }
-                                                catch (Exception)
-                                                {
-                                                    return null;
-                                                }
+                                                return null;
                                             }
 
                                             break;
                                         case "":
                                             try
                                             {
-                                                f = Convert.ToSingle(arg);
-                                                d = (double)f;
+                                                d = Convert.ToDouble(arg);
                                             }
                                             catch (Exception)
                                             {
-                                                try
-                                                {
-                                                    d = Convert.ToDouble(arg);
-                                                }
-                                                catch (Exception)
-                                                {
-                                                    return null;
-                                                }
+                                                return null;
                                             }
 
                                             break;
@@ -2599,18 +2565,26 @@ namespace sprintf
                                         bool fullPrec = false;
                                         Frexp(d, out negative, out mantissa, out exponent);
                                         string mantStr = Convert.ToString(mantissa, 16);
-                                        if (prec == 0)
+                                        if (hasPrecision)
                                         {
-                                            mantStr = "";
+                                            if (prec == 0)
+                                            {
+                                                mantStr = "";
+                                            }
+                                            else if (mantStr.Length <= prec)
+                                            {
+                                                fullPrec = true;
+                                            }
+                                            else if (mantStr.Length > prec - 1)
+                                            {
+                                                mantStr = mantStr.Substring(0, prec - 1);
+                                            }
                                         }
-                                        else if (mantStr.Length <= prec)
+                                        else
                                         {
-                                            fullPrec = true;
+                                            prec = 1;
                                         }
-                                        else if (mantStr.Length > prec - 1)
-                                        {
-                                            mantStr = mantStr.Substring(0, prec - 1);
-                                        }
+
 
                                         valStr = new StringBuilder(mantStr);
                                         if (fullPrec)
@@ -2651,7 +2625,14 @@ namespace sprintf
                                             }
                                         }
 
-                                        valStr.Append("P+");
+                                        if (exponent > 0)
+                                        {
+                                            valStr.Append("p+");
+                                        }
+                                        else
+                                        {
+                                            valStr.Append("p");
+                                        }
 
                                         valStr.Append(exponent.ToString());
 
@@ -2673,7 +2654,7 @@ namespace sprintf
                                             }
                                         }
 
-                                        valStr.Insert(0, "0X");
+                                        valStr.Insert(0, "0x");
 
                                         if (negative)
                                         {

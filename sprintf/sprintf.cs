@@ -142,11 +142,14 @@ namespace sprintf
             }
         }
 
-        private static StringBuilder SprintfParseFloatArg(bool groupDigits, bool scientificNotation, bool decimalFloatingPoint, object arg, string length, bool hasPrec, int prec)
+        private static StringBuilder SprintfParseFloatArg(bool groupDigits, bool scientificNotation, bool decimalFloatingPoint, object arg, string length, bool hasPrec, int prec, out bool isInf, out bool isNAN)
         {
             StringBuilder valStr;
             float f;
             double d;
+
+            isInf = false;
+            isNAN = false;
 
             switch (length)
             {
@@ -169,7 +172,22 @@ namespace sprintf
                         }
                     }
 
-                    if (scientificNotation && decimalFloatingPoint)
+                    if (double.IsNegativeInfinity(d))
+                    {
+                        valStr = new StringBuilder("-inf");
+                        isInf = true;
+                    }
+                    else if (double.IsPositiveInfinity(d))
+                    {
+                        valStr = new StringBuilder("inf");
+                        isInf = true;
+                    }
+                    else if (double.IsNaN(d))
+                    {
+                        valStr = new StringBuilder("nan");
+                        isNAN = true;
+                    }
+                    else if (scientificNotation && decimalFloatingPoint)
                     {
                         if (groupDigits)
                         {
@@ -229,7 +247,7 @@ namespace sprintf
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("F", Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(d.ToString("F6", Sprintf.currentCultureNumberFormat));
                             }
                         }
                         else
@@ -240,7 +258,7 @@ namespace sprintf
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("F"));
+                                valStr = new StringBuilder(d.ToString("F6"));
                             }
                         }
                     }
@@ -268,7 +286,22 @@ namespace sprintf
                         }
                     }
 
-                    if (scientificNotation && decimalFloatingPoint)
+                    if (double.IsNegativeInfinity(d))
+                    {
+                        valStr = new StringBuilder("-inf");
+                        isInf = true;
+                    }
+                    else if (double.IsPositiveInfinity(d))
+                    {
+                        valStr = new StringBuilder("inf");
+                        isInf = true;
+                    }
+                    else if (double.IsNaN(d))
+                    {
+                        valStr = new StringBuilder("nan");
+                        isNAN = true;
+                    }
+                    else if (scientificNotation && decimalFloatingPoint)
                     {
                         if (groupDigits)
                         {
@@ -324,11 +357,11 @@ namespace sprintf
                         {
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("F" + prec.ToString(), Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(d.ToString("N" + prec.ToString(), Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("F", Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(d.ToString("N6", Sprintf.currentCultureNumberFormat));
                             }
                         }
                         else
@@ -339,7 +372,7 @@ namespace sprintf
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("F"));
+                                valStr = new StringBuilder(d.ToString("F6"));
                             }
                         }
                     }
@@ -2271,15 +2304,22 @@ namespace sprintf
                                         return null;
                                     }
 
-                                    StringBuilder valStr = SprintfParseFloatArg(quoteFlag, scientificNotation, decimalFloatingPoint, arg, length.ToString(), hasPrecision, prec);
+                                    bool isInf;
+                                    bool isNaN;
+                                    StringBuilder valStr = SprintfParseFloatArg(quoteFlag, scientificNotation, decimalFloatingPoint, arg, length.ToString(), hasPrecision, prec, out isInf, out isNaN);
                                     if (valStr == null)
                                     {
                                         return null;
                                     }
 
-                                    if (hashFlag)
+                                    if (hashFlag && !isInf && !isNaN)
                                     {
                                         AddFloatPeriod(ref valStr);
+                                    }
+
+                                    if (!lower)
+                                    {
+                                        Capitalize(ref valStr);
                                     }
 
                                     if (valStr.Length > 0 && valStr[0] == '-')
@@ -2310,13 +2350,13 @@ namespace sprintf
                                     {
                                         valStr.Insert(0, '-');
                                     }
-                                    else if (spaceFlag)
-                                    {
-                                        valStr.Insert(0, ' ');
-                                    }
                                     else if (plusFlag)
                                     {
                                         valStr.Insert(0, '+');
+                                    }
+                                    else if (spaceFlag)
+                                    {
+                                        valStr.Insert(0, ' ');
                                     }
 
                                     if (minusFlag)

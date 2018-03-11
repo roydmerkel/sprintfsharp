@@ -2562,67 +2562,112 @@ namespace sprintf
                                         bool negative;
                                         long mantissa;
                                         int exponent;
+                                        int valStrLen;
                                         bool fullPrec = false;
                                         Frexp(d, out negative, out mantissa, out exponent);
-                                        string mantStr = Convert.ToString(mantissa, 16);
+                                        valStr = new StringBuilder(Convert.ToString(mantissa, 16));
+
+                                        if (exponent == 0 && mantissa == 0)
+                                        {
+                                            valStr.Insert(0, '0');
+                                        }
+                                        else
+                                        {
+                                            valStr.Insert(0, '1');
+                                        }
+
+                                        valStrLen = valStr.Length;
+
                                         if (hasPrecision)
                                         {
-                                            if (prec == 0)
+                                            if (valStrLen - 1 <= prec)
                                             {
-                                                mantStr = "";
-                                            }
-                                            else if (mantStr.Length <= prec)
-                                            {
-                                                fullPrec = true;
-                                            }
-                                            else if (mantStr.Length > prec - 1)
-                                            {
-                                                mantStr = mantStr.Substring(0, prec - 1);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            prec = 1;
-                                        }
-
-
-                                        valStr = new StringBuilder(mantStr);
-                                        if (fullPrec)
-                                        {
-                                            while (valStr.Length < prec)
-                                            {
-                                                valStr.Append('0');
-                                            }
-                                        }
-                                        else
-                                        {
-                                            while (valStr.Length < prec - 1)
-                                            {
-                                                valStr.Append('0');
-                                            }
-                                        }
-
-                                        if (prec > 0 || hashFlag)
-                                        {
-                                            if (mantissa == 0 && exponent == 0)
-                                            {
-                                                valStr.Insert(0, "0.");
+                                                while (valStrLen - 1 < prec)
+                                                {
+                                                    valStr.Append('0');
+                                                    valStrLen++;
+                                                }
                                             }
                                             else
                                             {
-                                                valStr.Insert(0, "1.");
+                                                while (valStrLen - 1 > prec)
+                                                {
+                                                    char digit = valStr[valStrLen - 1];
+                                                    int digVal = '0';
+
+                                                    if (digit >= '0' && digit <= '9')
+                                                    {
+                                                        digVal = digit - '0';
+                                                    }
+                                                    else if (digit >= 'a' && digit <= 'f')
+                                                    {
+                                                        digVal = digit - 'a' + 0xA;
+                                                    }
+                                                    else if (digit >= 'A' && digit <= 'F')
+                                                    {
+                                                        digVal = digit - 'A' + 0xA;
+                                                    }
+
+                                                    if (digVal >= 8)
+                                                    {
+                                                        bool carry = true;
+
+                                                        for (int i = valStrLen - 2; i >= 0; i--)
+                                                        {
+                                                            if (!carry)
+                                                            {
+                                                                break;
+                                                            }
+
+                                                            char curDigit = valStr[i];
+                                                            int curDigVal = '0';
+
+                                                            if (curDigit >= '0' && curDigit <= '9')
+                                                            {
+                                                                curDigVal = curDigit - '0';
+                                                            }
+                                                            else if (curDigit >= 'a' && curDigit <= 'f')
+                                                            {
+                                                                curDigVal = curDigit - 'a' + 0xA;
+                                                            }
+                                                            else if (curDigit >= 'A' && curDigit <= 'F')
+                                                            {
+                                                                curDigVal = curDigit - 'A' + 0xA;
+                                                            }
+
+                                                            curDigVal += 1;
+
+                                                            if (curDigVal > 0xF)
+                                                            {
+                                                                curDigVal = 0;
+                                                            }
+                                                            else
+                                                            {
+                                                                carry = false;
+                                                            }
+
+                                                            if (curDigVal < 0xA)
+                                                            {
+                                                                curDigit = Convert.ToChar(curDigVal + '0');
+                                                            }
+                                                            else
+                                                            {
+                                                                curDigit = Convert.ToChar(curDigVal - 0xA + 'a');
+                                                            }
+
+                                                            valStr[i] = curDigit;
+                                                        }
+                                                    }
+
+                                                    valStr.Remove(valStrLen - 1, 1);
+                                                    valStrLen--;
+                                                }
                                             }
                                         }
-                                        else
+
+                                        if ((!hasPrecision && valStr.Length > 1) || prec > 0 || hashFlag)
                                         {
-                                            if (mantissa == 0 && exponent == 0)
-                                            {
-                                                valStr.Insert(0, "0");
-                                            }
-                                            else
-                                            {
-                                                valStr.Insert(0, "1");
-                                            }
+                                            valStr.Insert(1, '.');
                                         }
 
                                         if (exponent > 0)
@@ -2668,20 +2713,20 @@ namespace sprintf
                                         {
                                             valStr.Insert(0, ' ');
                                         }
+                                    }
 
-                                        if (minusFlag)
+                                    if (minusFlag)
+                                    {
+                                        while (valStr.Length < widt)
                                         {
-                                            while (valStr.Length < widt)
-                                            {
-                                                valStr.Append(' ');
-                                            }
+                                            valStr.Append(' ');
                                         }
-                                        else
+                                    }
+                                    else
+                                    {
+                                        while (valStr.Length < widt)
                                         {
-                                            while (valStr.Length < widt)
-                                            {
-                                                valStr.Insert(0, ' ');
-                                            }
+                                            valStr.Insert(0, ' ');
                                         }
                                     }
 

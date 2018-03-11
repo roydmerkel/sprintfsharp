@@ -1635,6 +1635,54 @@ namespace testsprintf
 
             s = Sprintf.sprintf("%-'#0.30a", 22456000000000000000000.78912);
             Assert.AreEqual(s, "0x1.3055e697c0d3000000000000000000p+74");
+
+            s = Sprintf.sprintf("%-'#a", 1.0);
+            Assert.AreEqual(s, "0x1.p+0");
+
+            s = Sprintf.sprintf("%-'#0.0a", 1.0);
+            Assert.AreEqual(s, "0x1.p+0");
+
+            s = Sprintf.sprintf("%-'#0.1a", 1.0);
+            Assert.AreEqual(s, "0x1.0p+0");
+
+            s = Sprintf.sprintf("%-'#0.2a", 1.0);
+            Assert.AreEqual(s, "0x1.00p+0");
+
+            s = Sprintf.sprintf("%-'#a", 2.0);
+            Assert.AreEqual(s, "0x1.p+1");
+
+            s = Sprintf.sprintf("%-'#0.0a", 2.0);
+            Assert.AreEqual(s, "0x1.p+1");
+
+            s = Sprintf.sprintf("%-'#0.1a", 2.0);
+            Assert.AreEqual(s, "0x1.0p+1");
+
+            s = Sprintf.sprintf("%-'#0.2a", 2.0);
+            Assert.AreEqual(s, "0x1.00p+1");
+
+            s = Sprintf.sprintf("%-'#a", 5.0);
+            Assert.AreEqual(s, "0x1.4p+2");
+
+            s = Sprintf.sprintf("%-'#0.0a", 5.0);
+            Assert.AreEqual(s, "0x1.p+2");
+
+            s = Sprintf.sprintf("%-'#0.1a", 5.0);
+            Assert.AreEqual(s, "0x1.4p+2");
+
+            s = Sprintf.sprintf("%-'#0.2a", 5.0);
+            Assert.AreEqual(s, "0x1.40p+2");
+
+            s = Sprintf.sprintf("%-'#a", 255.0);
+            Assert.AreEqual(s, "0x1.fep+7");
+
+            s = Sprintf.sprintf("%-'#0.0a", 255.0);
+            Assert.AreEqual(s, "0x2.p+7");
+
+            s = Sprintf.sprintf("%-'#0.1a", 255.0);
+            Assert.AreEqual(s, "0x2.0p+7");
+
+            s = Sprintf.sprintf("%-'#0.2a", 255.0);
+            Assert.AreEqual(s, "0x1.fep+7");
         }
     }
 }

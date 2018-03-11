@@ -48,7 +48,7 @@ namespace sprintf
             return Marshal.SizeOf(typeof(IntPtr)) == 8;
         }
 
-        public static void Frexp(double d, out bool negative, out long mantissa, out int exponent)
+        public static void Frexp(double d, out bool negative, out long mantissa, out int exponent, out int normalizedExponent)
         {
 
             // Translate the double into sign, exponent and mantissa.
@@ -57,6 +57,7 @@ namespace sprintf
             negative = (bits < 0);
             exponent = (int)((bits >> 52) & 0x7ffL);
             mantissa = bits & 0xfffffffffffffL;
+            normalizedExponent = exponent;
 
             if (mantissa == 0 && exponent == 0)
             {
@@ -2562,12 +2563,13 @@ namespace sprintf
                                         bool negative;
                                         long mantissa;
                                         int exponent;
+                                        int normalizedExponent;
                                         int valStrLen;
                                         bool fullPrec = false;
-                                        Frexp(d, out negative, out mantissa, out exponent);
+                                        Frexp(d, out negative, out mantissa, out exponent, out normalizedExponent);
                                         valStr = new StringBuilder(Convert.ToString(mantissa, 16));
 
-                                        if (exponent == 0 && mantissa == 0)
+                                        if (exponent == 0 && normalizedExponent == 0 && mantissa == 0)
                                         {
                                             valStr.Insert(0, '0');
                                         }
@@ -2664,13 +2666,28 @@ namespace sprintf
                                                 }
                                             }
                                         }
+                                        else
+                                        {
+                                            /* it looks like gcc removes trailng zeros for %a when no precision is specified, so we need to do the same. */
+                                            for (int i = valStr.Length - 1; i >= 1; i--)
+                                            {
+                                                if (valStr[i] == '0')
+                                                {
+                                                    valStr.Remove(i, 1);
+                                                }
+                                                else
+                                                {
+                                                    break;
+                                                }
+                                            }
+                                        }
 
                                         if ((!hasPrecision && valStr.Length > 1) || prec > 0 || hashFlag)
                                         {
                                             valStr.Insert(1, '.');
                                         }
 
-                                        if (exponent > 0)
+                                        if (exponent >= 0)
                                         {
                                             valStr.Append("p+");
                                         }

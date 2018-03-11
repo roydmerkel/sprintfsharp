@@ -191,24 +191,52 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
+                            String tmp;
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("G" + (prec + 1).ToString(), Sprintf.currentCultureNumberFormat));
+                                tmp = d.ToString("g" + ((prec == 0) ? 1 : prec).ToString(), Sprintf.currentCultureNumberFormat);
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("G", Sprintf.currentCultureNumberFormat));
+                                tmp = d.ToString("g6", Sprintf.currentCultureNumberFormat);
+                            }
+
+                            string[] parts = tmp.Split(new string[] { Sprintf.currentCultureNumberFormat.NumberDecimalSeparator }, StringSplitOptions.None);
+
+                            if (parts.Length > 1)
+                            {
+                                valStr = new StringBuilder(parts[0]);
+                                GroupHexOctal(ref valStr, Sprintf.currentCultureNumberFormat);
+                                valStr.Append('.');
+                                valStr.Append(parts[1]);
+                            }
+                            else
+                            {
+                                parts = parts[0].Split(new string[] { "e" }, StringSplitOptions.None);
+
+                                if (parts.Length > 1)
+                                {
+                                    valStr = new StringBuilder(parts[0]);
+                                    GroupHexOctal(ref valStr, Sprintf.currentCultureNumberFormat);
+                                    valStr.Append('e');
+                                    valStr.Append(parts[1]);
+                                }
+                                else
+                                {
+                                    valStr = new StringBuilder(parts[0]);
+                                    GroupHexOctal(ref valStr, Sprintf.currentCultureNumberFormat);
+                                }
                             }
                         }
                         else
                         {
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("G" + (prec + 1).ToString()));
+                                valStr = new StringBuilder(d.ToString("g" + ((prec == 0) ? 1 : prec).ToString()));
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("G"));
+                                valStr = new StringBuilder(d.ToString("g6"));
                             }
                         }
                     }
@@ -334,24 +362,52 @@ namespace sprintf
                     {
                         if (groupDigits)
                         {
+                            string tmp;
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("G" + (prec + 1).ToString(), Sprintf.currentCultureNumberFormat));
+                                tmp = d.ToString("g" + ((prec == 0) ? 1 : prec).ToString(), Sprintf.currentCultureNumberFormat);
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("G", Sprintf.currentCultureNumberFormat));
+                                tmp = d.ToString("g6", Sprintf.currentCultureNumberFormat);
+                            }
+
+                            string[] parts = tmp.Split(new string[] { Sprintf.currentCultureNumberFormat.NumberDecimalSeparator }, StringSplitOptions.None);
+
+                            if (parts.Length > 1)
+                            {
+                                valStr = new StringBuilder(parts[0]);
+                                GroupHexOctal(ref valStr, Sprintf.currentCultureNumberFormat);
+                                valStr.Append('.');
+                                valStr.Append(parts[1]);
+                            }
+                            else
+                            {
+                                parts = parts[0].Split(new string[] { "e" }, StringSplitOptions.None);
+
+                                if (parts.Length > 1)
+                                {
+                                    valStr = new StringBuilder(parts[0]);
+                                    GroupHexOctal(ref valStr, Sprintf.currentCultureNumberFormat);
+                                    valStr.Append('e');
+                                    valStr.Append(parts[1]);
+                                }
+                                else
+                                {
+                                    valStr = new StringBuilder(parts[0]);
+                                    GroupHexOctal(ref valStr, Sprintf.currentCultureNumberFormat);
+                                }
                             }
                         }
                         else
                         {
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("G" + (prec + 1).ToString()));
+                                valStr = new StringBuilder(d.ToString("g" + ((prec == 0) ? 1 : prec).ToString()));
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("G"));
+                                valStr = new StringBuilder(d.ToString("g6"));
                             }
                         }
                     }

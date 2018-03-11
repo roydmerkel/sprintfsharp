@@ -1943,5 +1943,85 @@ namespace testsprintf
             s = Sprintf.sprintf("%-'0.2A", 1.0);
             Assert.AreEqual(s, "0X1.00P+0");
         }
+
+        [Test]
+        public void TestPercents()
+        {
+            String s = Sprintf.sprintf("%s", "abc123");
+            Assert.AreEqual(s, "abc123");
+
+            s = Sprintf.sprintf("%010s", "abc123");
+            Assert.AreEqual(s, "    abc123");
+
+            s = Sprintf.sprintf("%010.6s", "abc123");
+            Assert.AreEqual(s, "    abc123");
+
+            s = Sprintf.sprintf("%-010s", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-010.6s", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#010s", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#010.6s", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#'010s", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#'010.6s", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#'010s", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#'010.3s", "abc123");
+            Assert.AreEqual(s, "abc       ");
+
+            s = Sprintf.sprintf("%-#'010.0s", "abc123");
+            Assert.AreEqual(s, "          ");
+        }
+
+        [Test]
+        public void TestPercentS()
+        {
+            String s = Sprintf.sprintf("%S", "abc123");
+            Assert.AreEqual(s, "abc123");
+
+            s = Sprintf.sprintf("%010S", "abc123");
+            Assert.AreEqual(s, "    abc123");
+
+            s = Sprintf.sprintf("%010.6S", "abc123");
+            Assert.AreEqual(s, "    abc123");
+
+            s = Sprintf.sprintf("%-010S", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-010.6S", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#010S", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#010.6S", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#'010S", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#'010.6S", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#'010S", "abc123");
+            Assert.AreEqual(s, "abc123    ");
+
+            s = Sprintf.sprintf("%-#'010.3S", "abc123");
+            Assert.AreEqual(s, "abc       ");
+
+            s = Sprintf.sprintf("%-#'010.0S", "abc123");
+            Assert.AreEqual(s, "          ");
+        }
     }
 }

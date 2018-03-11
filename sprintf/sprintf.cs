@@ -2807,7 +2807,34 @@ namespace sprintf
                                     }
 
                                     s = arg.ToString();
-                                    buf.Append(s);
+
+                                    StringBuilder valStr;
+
+                                    if (!hasPrecision || s.Length <= prec)
+                                    {
+                                        valStr = new StringBuilder(s);
+                                    }
+                                    else
+                                    {
+                                        valStr = new StringBuilder(s.Substring(0, prec));
+                                    }
+
+                                    if (minusFlag)
+                                    {
+                                        while (valStr.Length < widt)
+                                        {
+                                            valStr.Append(' ');
+                                        }
+                                    }
+                                    else
+                                    {
+                                        while (valStr.Length < widt)
+                                        {
+                                            valStr.Insert(0, ' ');
+                                        }
+                                    }
+
+                                    buf.Append(valStr);
                                     numWritten += s.Length;
                                 }
                                 break;

@@ -2730,6 +2730,11 @@ namespace sprintf
                                         {
                                             valStr.Insert(0, ' ');
                                         }
+
+                                        if (!lower)
+                                        {
+                                            Capitalize(ref valStr);
+                                        }
                                     }
 
                                     if (minusFlag)

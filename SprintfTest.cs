@@ -2023,5 +2023,67 @@ namespace testsprintf
             s = Sprintf.sprintf("%-#'010.0S", "abc123");
             Assert.AreEqual(s, "          ");
         }
+
+        [Test]
+        public void TestPercentc()
+        {
+            String s = Sprintf.sprintf("%c", 'a');
+            Assert.AreEqual(s, "a");
+
+            s = Sprintf.sprintf("%0.0c", 'a');
+            Assert.AreEqual(s, "a");
+
+            s = Sprintf.sprintf("%01.0c", 'a');
+            Assert.AreEqual(s, "a");
+
+            s = Sprintf.sprintf("%02.0c", 'a');
+            Assert.AreEqual(s, " a");
+
+            s = Sprintf.sprintf("%02.0c", '\0');
+            Assert.AreEqual(s, " ");
+
+            s = Sprintf.sprintf("%02.0c", '\n');
+            Assert.AreEqual(s, " \n");
+
+            s = Sprintf.sprintf("%-02.0c", 'a');
+            Assert.AreEqual(s, "a ");
+
+            s = Sprintf.sprintf("%-#02.0c", 'a');
+            Assert.AreEqual(s, "a ");
+
+            s = Sprintf.sprintf("%-#'02.0c", 'a');
+            Assert.AreEqual(s, "a ");
+        }
+
+        [Test]
+        public void TestPercentC()
+        {
+            String s = Sprintf.sprintf("%C", 'a');
+            Assert.AreEqual(s, "a");
+
+            s = Sprintf.sprintf("%0.0C", 'a');
+            Assert.AreEqual(s, "a");
+
+            s = Sprintf.sprintf("%01.0C", 'a');
+            Assert.AreEqual(s, "a");
+
+            s = Sprintf.sprintf("%02.0C", 'a');
+            Assert.AreEqual(s, " a");
+
+            s = Sprintf.sprintf("%02.0C", '\0');
+            Assert.AreEqual(s, " ");
+
+            s = Sprintf.sprintf("%02.0C", '\n');
+            Assert.AreEqual(s, " \n");
+
+            s = Sprintf.sprintf("%-02.0C", 'a');
+            Assert.AreEqual(s, "a ");
+
+            s = Sprintf.sprintf("%-#02.0C", 'a');
+            Assert.AreEqual(s, "a ");
+
+            s = Sprintf.sprintf("%-#'02.0C", 'a');
+            Assert.AreEqual(s, "a ");
+        }
     }
 }

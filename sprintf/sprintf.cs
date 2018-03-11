@@ -2775,6 +2775,11 @@ namespace sprintf
                                         return null;
                                     }
 
+                                    if (length.Length > 0 && !length.ToString().Equals("l"))
+                                    {
+                                        return null;
+                                    }
+
                                     try
                                     {
                                         cha = Convert.ToChar(arg);
@@ -2784,8 +2789,47 @@ namespace sprintf
                                         return null;
                                     }
 
-                                    buf.Append(cha);
-                                    numWritten++;
+                                    StringBuilder valStr = new StringBuilder();
+
+                                    if (cha != '\0')
+                                    {
+                                        valStr.Append(cha);
+
+                                        if (minusFlag)
+                                        {
+                                            while (valStr.Length < widt)
+                                            {
+                                                valStr.Append(' ');
+                                            }
+                                        }
+                                        else
+                                        {
+                                            while (valStr.Length < widt)
+                                            {
+                                                valStr.Insert(0, ' ');
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (minusFlag)
+                                        {
+                                            while (valStr.Length < widt - 1)
+                                            {
+                                                valStr.Append(' ');
+                                            }
+                                        }
+                                        else
+                                        {
+                                            while (valStr.Length < widt - 1)
+                                            {
+                                                valStr.Insert(0, ' ');
+                                            }
+                                        }
+                                    }
+
+                                    buf.Append(valStr);
+                                    numWritten += valStr.Length;
                                 }
                                 break;
                             case 's':
@@ -2802,6 +2846,11 @@ namespace sprintf
                                     hasArg = argsIter.MoveNext();
 
                                     if (arg == null)
+                                    {
+                                        return null;
+                                    }
+
+                                    if (length.Length > 0 && !length.ToString().Equals("l"))
                                     {
                                         return null;
                                     }
@@ -2835,7 +2884,7 @@ namespace sprintf
                                     }
 
                                     buf.Append(valStr);
-                                    numWritten += s.Length;
+                                    numWritten += valStr.Length;
                                 }
                                 break;
                             case 'p':

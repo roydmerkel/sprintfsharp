@@ -218,23 +218,52 @@ namespace sprintf
                         {
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("E" + prec.ToString(), Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(d.ToString("e" + prec.ToString(), Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("E", Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(d.ToString("e", Sprintf.currentCultureNumberFormat));
                             }
                         }
                         else
                         {
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("E" + prec.ToString()));
+                                valStr = new StringBuilder(d.ToString("e" + prec.ToString()));
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("E"));
+                                valStr = new StringBuilder(d.ToString("e"));
                             }
+                        }
+                        int len = valStr.Length;
+                        int foundExp = -1;
+                        int expLen = 0;
+                        bool expStartsZero = false;
+
+                        for (int i = 0; i < len; i++)
+                        {
+                            if (valStr[i] == '+' || valStr[i] == '-')
+                            {
+                                foundExp = i + 1;
+                            }
+                            else if (foundExp == i)
+                            {
+                                if (valStr[i] == '0')
+                                {
+                                    expStartsZero = true;
+                                }
+                                expLen++;
+                            }
+                            else if (foundExp > 0)
+                            {
+                                expLen++;
+                            }
+                        }
+
+                        if (expStartsZero)
+                        {
+                            valStr.Remove(foundExp, 1);
                         }
                     }
                     else if (decimalFloatingPoint)
@@ -332,23 +361,52 @@ namespace sprintf
                         {
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("E" + prec.ToString(), Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(d.ToString("e" + prec.ToString(), Sprintf.currentCultureNumberFormat));
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("E", Sprintf.currentCultureNumberFormat));
+                                valStr = new StringBuilder(d.ToString("e", Sprintf.currentCultureNumberFormat));
                             }
                         }
                         else
                         {
                             if (hasPrec)
                             {
-                                valStr = new StringBuilder(d.ToString("E" + prec.ToString()));
+                                valStr = new StringBuilder(d.ToString("e" + prec.ToString()));
                             }
                             else
                             {
-                                valStr = new StringBuilder(d.ToString("E"));
+                                valStr = new StringBuilder(d.ToString("e"));
                             }
+                        }
+                        int len = valStr.Length;
+                        int foundExp = -1;
+                        int expLen = 0;
+                        bool expStartsZero = false;
+
+                        for (int i = 0; i < len; i++)
+                        {
+                            if (valStr[i] == '+' || valStr[i] == '-')
+                            {
+                                foundExp = i + 1;
+                            }
+                            else if (foundExp == i)
+                            {
+                                if (valStr[i] == '0')
+                                {
+                                    expStartsZero = true;
+                                }
+                                expLen++;
+                            }
+                            else if (foundExp > 0)
+                            {
+                                expLen++;
+                            }
+                        }
+
+                        if (expStartsZero)
+                        {
+                            valStr.Remove(foundExp, 1);
                         }
                     }
                     else if (decimalFloatingPoint)

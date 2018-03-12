@@ -2888,109 +2888,12 @@ namespace sprintf
                                 }
                                 break;
                             case 'p':
-                                {
-                                    if (!hasArg)
-                                    {
-                                        return null;
-                                    }
-
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
-
-                                    StringBuilder valStr;
-
-                                    if (Is64BitProcess())
-                                    {
-                                        long addr;
-
-                                        if (arg == null)
-                                        {
-                                            addr = 0;
-                                        }
-                                        else
-                                        {
-                                            GCHandle gch = GCHandle.Alloc(arg, GCHandleType.WeakTrackResurrection);
-
-                                            IntPtr pObj = gch.AddrOfPinnedObject();
-
-                                            addr = pObj.ToInt64();
-                                        }
-
-                                        valStr = new StringBuilder(Convert.ToString(addr, 16));
-                                    }
-                                    else
-                                    {
-                                        int addr;
-
-                                        if (arg == null)
-                                        {
-                                            addr = 0;
-                                        }
-                                        else
-                                        {
-                                            GCHandle gch = GCHandle.Alloc(arg, GCHandleType.WeakTrackResurrection);
-
-                                            IntPtr pObj = gch.AddrOfPinnedObject();
-
-                                            addr = pObj.ToInt32();
-                                        }
-
-                                        valStr = new StringBuilder(Convert.ToString(addr, 16));
-                                    }
-
-                                    while (valStr.Length < prec)
-                                    {
-                                        valStr.Insert(0, '0');
-                                    }
-
-                                    if (!hasPrecision && !minusFlag && zeroFlag)
-                                    {
-                                        if (spaceFlag || plusFlag)
-                                        {
-                                            while (valStr.Length < widt - 3)
-                                            {
-                                                valStr.Insert(0, '0');
-                                            }
-                                        }
-                                        else
-                                        {
-                                            while (valStr.Length < widt - 2)
-                                            {
-                                                valStr.Insert(0, '0');
-                                            }
-                                        }
-                                    }
-
-                                    valStr.Insert(0, "0x");
-
-                                    if (plusFlag)
-                                    {
-                                        valStr.Insert(0, '+');
-                                    }
-                                    else if (spaceFlag)
-                                    {
-                                        valStr.Insert(0, ' ');
-                                    }
-
-                                    if (minusFlag)
-                                    {
-                                        while (valStr.Length < widt)
-                                        {
-                                            valStr.Append(' ');
-                                        }
-                                    }
-                                    else
-                                    {
-                                        while (valStr.Length < widt)
-                                        {
-                                            valStr.Insert(0, ' ');
-                                        }
-                                    }
-
-                                    buf.Append(valStr);
-                                    numWritten += valStr.Length;
-                                }
-
+                                /* TODO: figure out a way to do this, getting the address of objects is rediculous...
+                                 * Apparently you either need:
+                                 * 1) an object that CAN be pinned (so called "blittable" objects)
+                                 * 2) you can make a reference __makeref to an object then *(IntPtr *)(((byte *)reference) + <fixed amount>), but this makes assumptions about the compiler's operation.
+                                 * 3) ???
+                                 */
                                 break;
                             case 'n':
                                 /* TODO: write numWritten into the passed argument, find out how to pass in ref object. */

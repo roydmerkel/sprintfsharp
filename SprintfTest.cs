@@ -2085,5 +2085,12 @@ namespace testsprintf
             s = Sprintf.sprintf("%-#'02.0C", 'a');
             Assert.AreEqual(s, "a ");
         }
+
+        [Test]
+        public void TestPercentChain()
+        {
+            String s = Sprintf.sprintf("%-+#'0*.*f%d\n", 20, 5, 1.0, 2500000);
+            Assert.AreEqual("+1.00000            2500000\n", s);
+        }
     }
 }

@@ -23,15 +23,33 @@ using System;
 using sprintf;
 using NUnit.Framework;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace testsprintf
 {
     [TestFixture]
     public class SprintfTest
     {
+		private sprintf.GetObjAddrInterface oldInter;
+		private PercentPGetObjAddr mockInter;
+
         public SprintfTest()
         {
+			oldInter = Sprintf.getAddrInter;
+			mockInter = new PercentPGetObjAddr();
         }
+
+		[SetUp]
+		public void SetUp() 
+		{
+			Sprintf.getAddrInter = mockInter;
+		}
+
+		[TearDown]
+		public void TearDown() 
+		{
+			Sprintf.getAddrInter = oldInter;
+		}
 
         [Test]
         public void TestPercentD()
@@ -2108,34 +2126,6 @@ namespace testsprintf
             Assert.AreEqual(s, "a ");
         }
 
-        struct Test
-        {
-            int a;
-            int b;
-            int c;
-
-            public Test(int a, int b, int c)
-            {
-                this.a = 0xBADF;
-                this.b = 0xDFBA;
-                this.c = 0xBABA;
-            }
-        }
-
-        class Test2
-        {
-            public int a;
-            public int b;
-            public int c;
-
-            public Test2(int a, int b, int c)
-            {
-                this.a = 0xBADF;
-                this.b = 0xDFBA;
-                this.c = 0xBABA;
-            }
-        }
-
 		public class PercentPGetObjAddr : sprintf.GetObjAddrInterface
 		{
 			public long retVal = 0;
@@ -2153,20 +2143,7 @@ namespace testsprintf
         [Test]
         public void TestPercentP()
         {
-            Test obj1 = new Test(1, 2, 3);
-            Test2 obj2 = new Test2(1, 2, 3);
-			Test obj3 = new Test(1, 2, 3);
-
-                                        //GCHandle gch = GCHandle.Alloc(arg, GCHandleType.WeakTrackResurrection);
-                                        ////GCHandle gch2 = GCHandle.Alloc(argp, GCHandleType.Pinned);
-                                        //IntPtr gchPtr = (IntPtr)gch;
-                                        //IntPtr objPtr = (IntPtr)Marshal.PtrToStructure(gchPtr, typeof(IntPtr));
-                                        //intPtrVal = objPtr.ToInt64() + IntPtr.Size;
-
             String s;
-			PercentPGetObjAddr mockInter = new PercentPGetObjAddr();
-			sprintf.GetObjAddrInterface oldInter = Sprintf.getAddrInter;
-			Sprintf.getAddrInter = mockInter;
 
 			mockInter.retVal = 1;
             s = Sprintf.sprintf("%p", 1);
@@ -2303,6 +2280,62 @@ namespace testsprintf
             s = Sprintf.sprintf("%#hp", 32767);
             Assert.AreEqual(s, "0x7fff");
         }
+
+		struct Test
+		{
+			public int a;
+			public int b;
+			public int c;
+
+			public Test(int a, int b, int c)
+			{
+				this.a = 0xBADF;
+				this.b = 0xDFBA;
+				this.c = 0xBABA;
+			}
+		}
+
+		class Test2
+		{
+			public int a;
+			public int b;
+			public int c;
+
+			public Test2(int a, int b, int c)
+			{
+				this.a = 0xFBAD;
+				this.b = 0xADFB;
+				this.c = 0xABAB;
+			}
+		}
+
+		[Test]
+		public unsafe void TestPercentPAddress()
+		{
+			Test obj1 = new Test(1, 2, 3);
+			Test2 obj2 = new Test2(1, 2, 3);
+			String s;
+			IntPtr addr;
+			int *objData;
+
+			Sprintf.getAddrInter = oldInter;
+			s = Sprintf.sprintf("%p", obj1);
+			addr = new IntPtr(int.Parse(s.Substring(2), NumberStyles.HexNumber));
+			objData = (int *)addr;
+
+			Assert.AreEqual(objData[0], obj1.a);
+            Assert.AreEqual(objData[1], obj1.b);
+            Assert.AreEqual(objData[2], obj1.c);
+
+			s = Sprintf.sprintf("%p", obj2);
+			addr = new IntPtr(int.Parse(s.Substring(2), NumberStyles.HexNumber));
+			objData = (int *)addr;
+
+			Assert.AreEqual(objData[0], obj2.a);
+			Assert.AreEqual(objData[1], obj2.b);
+			Assert.AreEqual(objData[2], obj2.c);
+
+		}
 
         [Test]
         public void TestPercentChain()

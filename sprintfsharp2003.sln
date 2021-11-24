@@ -1,0 +1,31 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sprintfsharp2003", "sprintfsharp2003.csproj", "{28F07545-C151-463C-9DE9-B31FB0CBF8B4}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testsprintf2003", "testsprintf2003.csproj", "{635F369E-F0F7-4735-BF0E-0B22ABB37976}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{28F07545-C151-463C-9DE9-B31FB0CBF8B4}.Debug.ActiveCfg = Debug|.NET
+		{28F07545-C151-463C-9DE9-B31FB0CBF8B4}.Debug.Build.0 = Debug|.NET
+		{28F07545-C151-463C-9DE9-B31FB0CBF8B4}.Release.ActiveCfg = Release|.NET
+		{28F07545-C151-463C-9DE9-B31FB0CBF8B4}.Release.Build.0 = Release|.NET
+		{635F369E-F0F7-4735-BF0E-0B22ABB37976}.Debug.ActiveCfg = Debug|.NET
+		{635F369E-F0F7-4735-BF0E-0B22ABB37976}.Debug.Build.0 = Debug|.NET
+		{635F369E-F0F7-4735-BF0E-0B22ABB37976}.Release.ActiveCfg = Release|.NET
+		{635F369E-F0F7-4735-BF0E-0B22ABB37976}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

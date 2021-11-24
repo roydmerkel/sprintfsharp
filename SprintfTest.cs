@@ -22,6 +22,7 @@
 using System;
 using sprintf;
 using NUnit.Framework;
+using System.Runtime.InteropServices;
 
 namespace testsprintf
 {
@@ -2105,6 +2106,202 @@ namespace testsprintf
 
             s = Sprintf.sprintf("%-#'02.0C", 'a');
             Assert.AreEqual(s, "a ");
+        }
+
+        struct Test
+        {
+            int a;
+            int b;
+            int c;
+
+            public Test(int a, int b, int c)
+            {
+                this.a = 0xBADF;
+                this.b = 0xDFBA;
+                this.c = 0xBABA;
+            }
+        }
+
+        class Test2
+        {
+            public int a;
+            public int b;
+            public int c;
+
+            public Test2(int a, int b, int c)
+            {
+                this.a = 0xBADF;
+                this.b = 0xDFBA;
+                this.c = 0xBABA;
+            }
+        }
+
+		public class PercentPGetObjAddr : sprintf.GetObjAddrInterface
+		{
+			public long retVal = 0;
+
+			public PercentPGetObjAddr()
+			{
+			}
+
+			public long getObjAddr(object arg)
+			{
+				return retVal;
+			}
+		}
+
+        [Test]
+        public void TestPercentP()
+        {
+            Test obj1 = new Test(1, 2, 3);
+            Test2 obj2 = new Test2(1, 2, 3);
+			Test obj3 = new Test(1, 2, 3);
+
+                                        //GCHandle gch = GCHandle.Alloc(arg, GCHandleType.WeakTrackResurrection);
+                                        ////GCHandle gch2 = GCHandle.Alloc(argp, GCHandleType.Pinned);
+                                        //IntPtr gchPtr = (IntPtr)gch;
+                                        //IntPtr objPtr = (IntPtr)Marshal.PtrToStructure(gchPtr, typeof(IntPtr));
+                                        //intPtrVal = objPtr.ToInt64() + IntPtr.Size;
+
+            String s;
+			PercentPGetObjAddr mockInter = new PercentPGetObjAddr();
+			sprintf.GetObjAddrInterface oldInter = Sprintf.getAddrInter;
+			Sprintf.getAddrInter = mockInter;
+
+			mockInter.retVal = 1;
+            s = Sprintf.sprintf("%p", 1);
+            Assert.AreEqual(s, "0x1");
+
+            s = Sprintf.sprintf("%0p", 1);
+            Assert.AreEqual(s, "0x1");
+
+            s = Sprintf.sprintf("%010p", 1);
+            Assert.AreEqual(s, "0x00000001");
+
+            s = Sprintf.sprintf("%+010p", 1);
+            Assert.AreEqual(s, "+0x0000001");
+
+            s = Sprintf.sprintf("%-+010p", 1);
+            Assert.AreEqual(s, "+0x1      ");
+
+            s = Sprintf.sprintf("% 010p", 1);
+            Assert.AreEqual(s, " 0x0000001");
+
+            s = Sprintf.sprintf("% 10p", 1);
+            Assert.AreEqual(s, "       0x1");
+
+            s = Sprintf.sprintf("%010.5p", 1);
+            Assert.AreEqual(s, "   0x00001");
+
+            s = Sprintf.sprintf("%+010.5p", 1);
+            Assert.AreEqual(s, "  +0x00001");
+
+            s = Sprintf.sprintf("%+-010.5p", 1);
+            Assert.AreEqual(s, "+0x00001  ");
+
+            s = Sprintf.sprintf("%+-'010.5p", 1);
+            Assert.AreEqual(s, "+0x00001  ");
+
+			mockInter.retVal = 1000000000;
+            s = Sprintf.sprintf("%+-'010.5p", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+			mockInter.retVal = 32767;
+            s = Sprintf.sprintf("%+-'010.5hp", 32767);
+            Assert.AreEqual(s, "+0x07fff  ");
+
+			mockInter.retVal = 127;
+            s = Sprintf.sprintf("%+-'010.5hhp", 127);
+            Assert.AreEqual(s, "+0x0007f  ");
+
+			mockInter.retVal = 1000000000;
+            s = Sprintf.sprintf("%+-'010.5lp", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'010.5llp", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'010.5zp", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'010.5jp", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'010.5tp", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'010.5qp", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'010.5Ip", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'010.5I32p", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'010.5I64p", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00");
+
+            s = Sprintf.sprintf("%+-'020.5I64p", 1000000000);
+            Assert.AreEqual(s, "+0x3b9aca00         ");
+
+            s = Sprintf.sprintf("%+'020.5I64p", 1000000000);
+            Assert.AreEqual(s, "         +0x3b9aca00");
+
+			mockInter.retVal = 0;
+            s = Sprintf.sprintf("%+-'020.0p", 0);
+            Assert.AreEqual(s, "(nil)               ");
+
+            s = Sprintf.sprintf("%+'020.0p", 0);
+            Assert.AreEqual(s, "               (nil)");
+
+            s = Sprintf.sprintf("%+'0*.*p", 20, 0, 0);
+            Assert.AreEqual(s, "               (nil)");
+
+            s = Sprintf.sprintf("ab%+'0*.*pcd", 20, 0, 0);
+            Assert.AreEqual(s, "ab               (nil)cd");
+
+            s = Sprintf.sprintf("\"%p\"\n", 0);
+            Assert.AreEqual(s, "\"(nil)\"\n");
+
+            s = Sprintf.sprintf("\"%+0*p\"\n", 20, 0);
+            Assert.AreEqual(s, "\"               (nil)\"\n");
+
+			mockInter.retVal = 255;
+            s = Sprintf.sprintf("%hhp", 255);
+            Assert.AreEqual(s, "0xff");
+
+			mockInter.retVal = -128;
+            s = Sprintf.sprintf("%hhp", -128);
+            Assert.AreEqual(s, "0xffffff80");
+
+            s = Sprintf.sprintf("%010hhp", -128);
+            Assert.AreEqual(s, "0xffffff80");
+
+            s = Sprintf.sprintf("%0.10hhp", -128);
+            Assert.AreEqual(s, "0x00ffffff80");
+
+            s = Sprintf.sprintf("%020.10hhp", -128);
+            Assert.AreEqual(s, "        0x00ffffff80");
+
+			mockInter.retVal = 32767;
+            s = Sprintf.sprintf("%'#020.5hp", 32767);
+            Assert.AreEqual(s, "             0x07fff");
+
+            s = Sprintf.sprintf("%'#020.10hp", 32767);
+            Assert.AreEqual(s, "        0x0000007fff");
+
+            s = Sprintf.sprintf("%'#hp", 32767);
+            Assert.AreEqual(s, "0x7fff");
+
+            s = Sprintf.sprintf("%#020.5hp", 32767);
+            Assert.AreEqual(s, "             0x07fff");
+
+            s = Sprintf.sprintf("%#020.10hp", 32767);
+            Assert.AreEqual(s, "        0x0000007fff");
+
+            s = Sprintf.sprintf("%#hp", 32767);
+            Assert.AreEqual(s, "0x7fff");
         }
 
         [Test]

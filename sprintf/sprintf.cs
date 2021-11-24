@@ -27,8 +27,41 @@ using System.Collections;
 
 namespace sprintf
 {
-    public static class Sprintf
+	public interface GetObjAddrInterface
+	{
+		long getObjAddr(object arg);
+	}
+
+	public class GetObjAddr : GetObjAddrInterface
+	{
+		public GetObjAddr()
+		{
+		}
+
+		public long getObjAddr(object arg)
+		{
+			long intPtrVal;
+
+			if (arg == null)
+			{
+				intPtrVal = 0;
+			}
+			else
+			{
+				GCHandle gch = GCHandle.Alloc(arg, GCHandleType.WeakTrackResurrection);
+				//GCHandle gch2 = GCHandle.Alloc(argp, GCHandleType.Pinned);
+				IntPtr gchPtr = (IntPtr)gch;
+				IntPtr objPtr = (IntPtr)Marshal.PtrToStructure(gchPtr, typeof(IntPtr));
+				intPtrVal = objPtr.ToInt64() + IntPtr.Size;
+			}
+			return intPtrVal;
+		}
+	}
+
+    public class Sprintf
     {
+		public static GetObjAddrInterface getAddrInter = new GetObjAddr();
+
         [StructLayout(LayoutKind.Explicit)]
         struct ByteConv
         {
@@ -214,7 +247,7 @@ namespace sprintf
                                 tmp = d.ToString("g6", Sprintf.currentCultureNumberFormat);
                             }
 
-                            string[] parts = tmp.Split(new string[] { Sprintf.currentCultureNumberFormat.NumberDecimalSeparator }, StringSplitOptions.None);
+                            string[] parts = tmp.Split(Sprintf.currentCultureNumberFormat.NumberDecimalSeparator.ToCharArray());
 
                             if (parts.Length > 1)
                             {
@@ -225,7 +258,7 @@ namespace sprintf
                             }
                             else
                             {
-                                parts = parts[0].Split(new string[] { "e" }, StringSplitOptions.None);
+                                parts = parts[0].Split("e".ToCharArray());
 
                                 if (parts.Length > 1)
                                 {
@@ -377,7 +410,7 @@ namespace sprintf
                                 tmp = d.ToString("g6", Sprintf.currentCultureNumberFormat);
                             }
 
-                            string[] parts = tmp.Split(new string[] { Sprintf.currentCultureNumberFormat.NumberDecimalSeparator }, StringSplitOptions.None);
+                            string[] parts = tmp.Split(Sprintf.currentCultureNumberFormat.NumberDecimalSeparator.ToCharArray());
 
                             if (parts.Length > 1)
                             {
@@ -388,7 +421,7 @@ namespace sprintf
                             }
                             else
                             {
-                                parts = parts[0].Split(new string[] { "e" }, StringSplitOptions.None);
+                                parts = parts[0].Split("e".ToCharArray());
 
                                 if (parts.Length > 1)
                                 {
@@ -1713,9 +1746,9 @@ namespace sprintf
                                 widthStar = false;
                                 hasWidth = false;
                                 hasPrecision = false;
-                                width.Clear();
-                                precision.Clear();
-                                length.Clear();
+                                width.Length = 0;
+                                precision.Length = 0;
+                                length.Length = 0;
                                 lengthLookback[0] = '\0';
                                 lengthLookback[1] = '\0';
                                 lengthLookback[2] = '\0';
@@ -2100,7 +2133,7 @@ namespace sprintf
 
                                     if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
                                     {
-                                        valStr.Clear();
+                                        valStr.Length = 0;
                                     }
                                     else
                                     {
@@ -2184,7 +2217,7 @@ namespace sprintf
 
                                     if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
                                     {
-                                        valStr.Clear();
+                                        valStr.Length = 0;
                                     }
                                     else
                                     {
@@ -2265,7 +2298,7 @@ namespace sprintf
 
                                     if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
                                     {
-                                        valStr.Clear();
+                                        valStr.Length = 0;
                                     }
                                     else
                                     {
@@ -2347,7 +2380,7 @@ namespace sprintf
 
                                     if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
                                     {
-                                        valStr.Clear();
+                                        valStr.Length = 0;
                                     }
                                     else
                                     {
@@ -2908,13 +2941,107 @@ namespace sprintf
                                     numWritten += valStr.Length;
                                 }
                                 break;
-                            case 'p':
-                                /* TODO: figure out a way to do this, getting the address of objects is rediculous...
-                                 * Apparently you either need:
-                                 * 1) an object that CAN be pinned (so called "blittable" objects)
-                                 * 2) you can make a reference __makeref to an object then *(IntPtr *)(((byte *)reference) + <fixed amount>), but this makes assumptions about the compiler's operation.
-                                 * 3) ???
-                                 */
+                            case 'p':								
+                                if (!hasArg)
+                                {
+                                    return null;
+                                }
+                                else
+                                {
+									bool hasNeg = false;
+                                    long intPtrVal = 0;
+                                    object arg = argsIter.Current;
+                                    hasArg = argsIter.MoveNext();
+									intPtrVal = getAddrInter.getObjAddr(arg);
+
+									StringBuilder valStr;
+									if(intPtrVal == 0)
+									{
+										valStr = new StringBuilder("(nil)");
+									}
+									else
+									{
+										valStr = Sprintf.sprintfParseIntArg(false, false, true, false, intPtrVal, "");
+									}
+
+									if (valStr == null)
+									{
+										return null;
+									}
+
+									if(intPtrVal != 0)
+									{
+										if (hasPrecision && prec == 0 && valStr.Length == 1 && valStr[0] == '0')
+										{
+										}
+										else
+										{
+											while (valStr.Length < prec)
+											{
+												valStr.Insert(0, '0');
+											}
+										}
+
+										if (!hasPrecision && !minusFlag && zeroFlag)
+										{
+											if (hasNeg || plusFlag || spaceFlag || hasNeg)
+											{
+												while (valStr.Length < widt - 3)
+												{
+													valStr.Insert(0, '0');
+												}
+											}
+											else
+											{
+												while (valStr.Length < widt - 2)
+												{
+													valStr.Insert(0, '0');
+												}
+											}
+										}
+
+										valStr.Insert(0, "0x");
+
+										if (hasNeg)
+										{
+											valStr.Insert(0, '-');
+										}
+										if (!hasNeg && plusFlag)
+										{
+											valStr.Insert(0, '+');
+										}
+										else if (!hasNeg && spaceFlag)
+										{
+											valStr.Insert(0, ' ');
+										}
+									} 
+									else 
+									{
+										if (!hasNeg && spaceFlag)
+										{
+											valStr.Insert(0, ' ');
+										}
+									}
+
+									if (minusFlag)
+									{
+										while (valStr.Length < widt)
+										{
+											valStr.Append(' ');
+										}
+									}
+									else
+									{
+										while (valStr.Length < widt)
+										{
+											valStr.Insert(0, ' ');
+										}
+									}
+
+                                    numWritten += valStr.Length;
+                                    buf.Append(valStr);
+                                }
+
                                 break;
                             case 'n':
                                 /* TODO: write numWritten into the passed argument, find out how to pass in ref object. */
@@ -2936,9 +3063,9 @@ namespace sprintf
                         widthStar = false;
                         hasWidth = false;
                         hasPrecision = false;
-                        width.Clear();
-                        precision.Clear();
-                        length.Clear();
+                        width.Length = 0;
+                        precision.Length = 0;
+                        length.Length = 0;
                         lengthLookback[0] = '\0';
                         lengthLookback[1] = '\0';
                         lengthLookback[2] = '\0';

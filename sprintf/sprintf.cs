@@ -1702,6 +1702,9 @@ namespace sprintf
             StringBuilder width = new StringBuilder();
             StringBuilder precision = new StringBuilder();
             StringBuilder length = new StringBuilder();
+            StringBuilder positionalParam = new StringBuilder();
+            StringBuilder widthParam = new StringBuilder();
+            StringBuilder precisionParam = new StringBuilder();
             char[] lengthLookback = new char[3] { '\0', '\0', '\0' };
             StringBuilder buf = new StringBuilder();
             bool widthStar = false;
@@ -1752,11 +1755,80 @@ namespace sprintf
                                 lengthLookback[0] = '\0';
                                 lengthLookback[1] = '\0';
                                 lengthLookback[2] = '\0';
+                                positionalParam.Length = 0;
+                                widthParam.Length = 0;
+                                precisionParam.Length = 0;
                                 buf.Append(ch);
                                 numWritten++;
                                 state = 0;
                                 hasNext = iter.MoveNext();
                                 break;
+                            case '0':
+                                zeroFlag = true;
+                                positionalParam.Append(ch);
+                                hasNext = iter.MoveNext();
+                                state = 2;
+                                break;
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                            case '5':
+                            case '6':
+                            case '7':
+                            case '8':
+                            case '9':
+                                positionalParam.Append(ch);
+                                hasNext = iter.MoveNext();
+                                state = 2;
+                                break;
+                            default:
+                                state = 3;
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (ch)
+                        {
+                            case '0':
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                            case '5':
+                            case '6':
+                            case '7':
+                            case '8':
+                            case '9':
+                                positionalParam.Append(ch);
+                                hasNext = iter.MoveNext();
+                                break;
+                            case '$':
+                                zeroFlag = false;
+                                hasNext = iter.MoveNext();
+                                state = 3;
+                                break;
+                            default:
+                                if (zeroFlag)
+                                {
+                                    width.Append(positionalParam.ToString().Substring(1));
+                                }
+                                else
+                                {
+                                    width.Append(positionalParam.ToString());
+                                }
+                                if (width.Length > 0)
+                                {
+                                    hasWidth = true;
+                                }
+                                positionalParam.Length = 0;
+                                state = 4;
+                                break;
+                        }
+                        break;
+                    case 3:
+                        switch (ch)
+                        {
                             case '-':
                                 minusFlag = true;
                                 hasNext = iter.MoveNext();
@@ -1782,11 +1854,11 @@ namespace sprintf
                                 hasNext = iter.MoveNext();
                                 break;
                             default:
-                                state = 2;
+                                state = 4;
                                 break;
                         }
                         break;
-                    case 2:
+                    case 4:
                         switch (ch)
                         {
                             case '*':
@@ -1801,6 +1873,27 @@ namespace sprintf
                                 hasNext = iter.MoveNext();
                                 break;
                             case '0':
+                                if (!hasWidth)
+                                {
+                                    zeroFlag = true;
+                                    hasNext = iter.MoveNext();
+                                }
+                                else
+                                {
+                                    if (widthStar)
+                                    {
+                                        widthParam.Append(ch);
+                                        hasNext = iter.MoveNext();
+                                        state = 5;
+                                    }
+                                    else
+                                    {
+                                        hasWidth = true;
+                                        width.Append(ch);
+                                        hasNext = iter.MoveNext();
+                                    }
+                                }
+                                break;
                             case '1':
                             case '2':
                             case '3':
@@ -1812,23 +1905,63 @@ namespace sprintf
                             case '9':
                                 if (widthStar)
                                 {
-                                    return null;
+                                    widthParam.Append(ch);
+                                    hasNext = iter.MoveNext();
+                                    state = 5;
                                 }
-
-                                hasWidth = true;
-                                width.Append(ch);
-                                hasNext = iter.MoveNext();
+                                else
+                                {
+                                    hasWidth = true;
+                                    width.Append(ch);
+                                    hasNext = iter.MoveNext();
+                                }
                                 break;
                             case '.':
-                                state = 3;
+                                state = 7;
                                 hasNext = iter.MoveNext();
                                 break;
                             default:
-                                state = 4;
+                                state = 9;
                                 break;
                         }
                         break;
-                    case 3:
+                    case 5:
+                        switch (ch)
+                        {
+                            case '0':
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                            case '5':
+                            case '6':
+                            case '7':
+                            case '8':
+                            case '9':
+                                widthParam.Append(ch);
+                                hasNext = iter.MoveNext();
+                                break;
+                            case '$':
+                                hasNext = iter.MoveNext();
+                                state = 6;
+                                break;
+                            default:
+                                return null;
+                        }
+                        break;
+                    case 6:
+                        switch(ch)
+                        {
+                            case '.':
+                                hasNext = iter.MoveNext();
+                                state = 7;
+                                break;
+                            default:
+                                state = 9;
+                                break;
+                        }
+                        break;
+                    case 7:
                         switch (ch)
                         {
                             case '*':
@@ -1854,19 +1987,52 @@ namespace sprintf
                             case '9':
                                 if (precisionStar)
                                 {
-                                    return null;
+                                    precisionParam.Append(ch);
+                                    hasNext = iter.MoveNext();
+                                    state = 8;
                                 }
-
-                                hasPrecision = true;
-                                precision.Append(ch);
-                                hasNext = iter.MoveNext();
+                                else
+                                {
+                                    hasPrecision = true;
+                                    precision.Append(ch);
+                                    hasNext = iter.MoveNext();
+                                }
                                 break;
                             default:
-                                state = 4;
+                                state = 9;
                                 break;
                         }
                         break;
-                    case 4:
+                    case 8:
+                        switch (ch)
+                        {
+                            case '0':
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                            case '5':
+                            case '6':
+                            case '7':
+                            case '8':
+                            case '9':
+                                precisionParam.Append(ch);
+                                hasNext = iter.MoveNext();
+                                break;
+                            case '$':
+                                hasNext = iter.MoveNext();
+                                state = 9;
+                                break;
+                            default:
+                                if (precisionParam.Length > 0)
+                                {
+                                    return null;
+                                }
+                                state = 9;
+                                break;
+                        }
+                        break;
+                    case 9:
                         switch (ch)
                         {
                             case 'h':
@@ -1884,7 +2050,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
 
                                 break;
@@ -1903,7 +2069,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
 
                                 break;
@@ -1916,7 +2082,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case 'z':
@@ -1928,7 +2094,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case 'j':
@@ -1940,7 +2106,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case 't':
@@ -1952,7 +2118,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case 'I':
@@ -1964,7 +2130,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case '2':
@@ -1976,7 +2142,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case '3':
@@ -1988,7 +2154,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case '4':
@@ -2000,7 +2166,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case '6':
@@ -2012,7 +2178,7 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             case 'q':
@@ -2024,17 +2190,70 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    state = 5;
+                                    state = 10;
                                 }
                                 break;
                             default:
-                                state = 5;
+                                state = 10;
                                 break;
                         }
                         break;
-                    case 5:
+                    case 10:
                         int prec = 0;
                         int widt = 0;
+                        int posParm = 0;
+                        int widtParm = 0;
+                        int precParm = 0;
+
+                        if (positionalParam.Length > 0)
+                        {
+                            try
+                            {
+                                posParm = int.Parse(positionalParam.ToString());
+                            }
+                            catch (Exception)
+                            {
+                                return null;
+                            }
+
+                            if (posParm <= 0)
+                            {
+                                return null;
+                            }
+                        }
+                        if (widthParam.Length > 0)
+                        {
+                            try
+                            {
+                                widtParm = int.Parse(widthParam.ToString());
+                            }
+                            catch (Exception)
+                            {
+                                return null;
+                            }
+
+                            if (widtParm <= 0)
+                            {
+                                return null;
+                            }
+                        }
+
+                        if (precisionParam.Length > 0)
+                        {
+                            try
+                            {
+                                precParm = int.Parse(precisionParam.ToString());
+                            }
+                            catch (Exception)
+                            {
+                                return null;
+                            }
+
+                            if (precParm <= 0)
+                            {
+                                return null;
+                            }
+                        }
 
                         if (hasWidth)
                         {
@@ -2046,14 +2265,30 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    try
+                                    if (widtParm > 0)
                                     {
-                                        widt = int.Parse(argsIter.Current.ToString());
+                                        if (args.Length >= widtParm)
+                                        {
+                                            try
+                                            {
+                                                widt = int.Parse(args[widtParm - 1].ToString());
+                                            }
+                                            catch (Exception)
+                                            {
+                                            }
+                                        }
                                     }
-                                    catch (Exception)
+                                    else
                                     {
+                                        try
+                                        {
+                                            widt = int.Parse(argsIter.Current.ToString());
+                                        }
+                                        catch (Exception)
+                                        {
+                                        }
+                                        hasArg = argsIter.MoveNext();
                                     }
-                                    hasArg = argsIter.MoveNext();
                                 }
                             }
                             else
@@ -2078,14 +2313,30 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    try
+                                    if (precParm > 0)
                                     {
-                                        prec = int.Parse(argsIter.Current.ToString());
+                                        if (args.Length >= precParm)
+                                        {
+                                            try
+                                            {
+                                                prec = int.Parse(args[precParm - 1].ToString());
+                                            }
+                                            catch (Exception)
+                                            {
+                                            }
+                                        }
                                     }
-                                    catch (Exception)
+                                    else
                                     {
+                                        try
+                                        {
+                                            prec = int.Parse(argsIter.Current.ToString());
+                                        }
+                                        catch (Exception)
+                                        {
+                                        }
+                                        hasArg = argsIter.MoveNext();
                                     }
-                                    hasArg = argsIter.MoveNext();
                                 }
                             }
                             else
@@ -2111,8 +2362,19 @@ namespace sprintf
                                 else
                                 {
                                     bool hasNeg = false;
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
 
                                     if (arg == null)
                                     {
@@ -2201,8 +2463,19 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
 
                                     if (arg == null)
                                     {
@@ -2283,8 +2556,20 @@ namespace sprintf
                                 else
                                 {
                                     bool isUpper = (ch == 'X');
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
+
                                     if (arg == null)
                                     {
                                         return null;
@@ -2365,8 +2650,20 @@ namespace sprintf
                                 }
                                 else
                                 {
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
+
                                     if (arg == null)
                                     {
                                         return null;
@@ -2449,8 +2746,20 @@ namespace sprintf
                                     bool scientificNotation = (ch == 'e' || ch == 'E' || ch == 'g' || ch == 'G');
                                     bool decimalFloatingPoint = (ch == 'f' || ch == 'F' || ch == 'g' || ch == 'G');
                                     bool lower = (ch == 'e' || ch == 'f' || ch == 'g');
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
+
                                     if (arg == null)
                                     {
                                         return null;
@@ -2539,8 +2848,19 @@ namespace sprintf
                                     }
 
                                     bool lower = (ch == 'a');
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
 
                                     if (arg == null)
                                     {
@@ -2821,8 +3141,19 @@ namespace sprintf
 
                                     /* %c and %C are the same in C# because char type is already 16bit unicode. */
                                     char cha;
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
 
                                     if (arg == null)
                                     {
@@ -2896,8 +3227,19 @@ namespace sprintf
 
                                     /* %s and %S are the same in C# because string type is already 16bit unicode. */
                                     string s;
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
 
                                     if (arg == null)
                                     {
@@ -2950,8 +3292,19 @@ namespace sprintf
                                 {
 									bool hasNeg = false;
                                     long intPtrVal = 0;
-                                    object arg = argsIter.Current;
-                                    hasArg = argsIter.MoveNext();
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
 									intPtrVal = getAddrInter.getObjAddr(arg);
 
 									StringBuilder valStr;
@@ -3066,6 +3419,9 @@ namespace sprintf
                         width.Length = 0;
                         precision.Length = 0;
                         length.Length = 0;
+                        positionalParam.Length = 0;
+                        widthParam.Length = 0;
+                        precisionParam.Length = 0;
                         lengthLookback[0] = '\0';
                         lengthLookback[1] = '\0';
                         lengthLookback[2] = '\0';

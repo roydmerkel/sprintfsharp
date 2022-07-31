@@ -2343,5 +2343,117 @@ namespace testsprintf
             String s = Sprintf.sprintf("%-+#'0*.*f%d\n", 20, 5, 1.0, 2500000);
             Assert.AreEqual("+1.00000            2500000\n", s);
         }
+
+        [Test]
+        public void TestPositionalParams()
+        {
+            String s = Sprintf.sprintf("%5$04x\n", 1, 2, 3, 4, 5);
+            Assert.AreEqual("0005\n", s);
+
+            s = Sprintf.sprintf("%05$4x\n", 1, 2, 3, 4, 5);
+            Assert.AreEqual("   5\n", s);
+
+            s = Sprintf.sprintf("%04x\n", 1, 2, 3, 4, 5);
+            Assert.AreEqual("0001\n", s);
+
+            s = Sprintf.sprintf("%0*x\n", 1, 2, 3, 4, 5);
+            Assert.AreEqual("2\n", s);
+
+            s = Sprintf.sprintf("%5$04x %x\n", 1, 2, 3, 4, 5);
+            Assert.AreEqual("0005 1\n", s);
+
+            s = Sprintf.sprintf("%05$04x %x\n", 1, 2, 3, 4, 5);
+            Assert.AreEqual("0005 1\n", s);
+
+            s = Sprintf.sprintf("%9$04x %x\n", 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            Assert.AreEqual("0009 1\n", s);
+
+            s = Sprintf.sprintf("%09$04x %x\n", 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            Assert.AreEqual("0009 1\n", s);
+
+            s = Sprintf.sprintf("%0x09$04x %x\n", 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            Assert.AreEqual("109$04x 2\n", s);
+
+            s = Sprintf.sprintf("%0A$04x %x\n", 1, 2, 3, 4, 5, 6, 7, 8, 9);
+            Assert.AreEqual("0X1P+0$04x 2\n", s);
+
+            s = Sprintf.sprintf("%10$04x %x\n", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            Assert.AreEqual("000a 1\n", s);
+
+            s = Sprintf.sprintf("%10$04x %x\n", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            Assert.AreEqual("000a 1\n", s);
+
+            s = Sprintf.sprintf("%0$s\n", "a", "b");
+            Assert.IsNull(s);
+
+            s = Sprintf.sprintf("%7$#x\n", 1, 2, 3, 4, 5, 6, 7);
+            Assert.AreEqual("0x7\n", s);
+
+            s = Sprintf.sprintf("%7$6x\n", 1, 2, 3, 4, 5, 6, 7);
+            Assert.AreEqual("     7\n", s);
+
+            s = Sprintf.sprintf("%7$06x\n", 1, 2, 3, 4, 5, 6, 7);
+            Assert.AreEqual("000007\n", s);
+
+            s = Sprintf.sprintf("%7$06.05x\n", 1, 2, 3, 4, 5, 6, 7);
+            Assert.AreEqual(" 00007\n", s);
+        }
+
+        [Test]
+        public void TestPositionalWidth()
+        {
+            String s = Sprintf.sprintf("%*0x\n", 5, 4);
+            Assert.IsNull(s);
+
+            s = Sprintf.sprintf("%0*x\n", 5, 4);
+            Assert.AreEqual("00004\n", s);
+
+            s = Sprintf.sprintf("%*0$s\n", "a", "b");
+            Assert.IsNull(s);
+
+            s = Sprintf.sprintf("%0*4$x\n", 2, 4, 6, 8, 10);
+            Assert.AreEqual("00000002\n", s);
+
+            s = Sprintf.sprintf("%*4$0x\n", 2, 4, 6, 8, 10);
+            Assert.IsNull(s);
+        }
+
+        [Test]
+        public void TestPositionalPrecision()
+        {
+            String s = Sprintf.sprintf("%.*0x\n", 5, 4);
+            Assert.IsNull(s);
+
+            s = Sprintf.sprintf("%.*5$x\n", 1, 2, 3, 4, 5);
+            Assert.AreEqual("00001\n", s);
+        }
+
+        [Test]
+        public void TestPositionalPrecisionAndWidth()
+        {
+            String s = Sprintf.sprintf("%*7$.*5$x\n", 1, 2, 3, 4, 5, 6, 7);
+            Assert.AreEqual("  00001\n", s);
+        }
+
+        [Test]
+        public void TestPositionalParamAndPrecision()
+        {
+            String s = Sprintf.sprintf("%7$.*5$x\n", 1, 2, 3, 4, 5, 6, 7);
+            Assert.AreEqual("00007\n", s);
+        }
+
+        [Test]
+        public void TestPositionalParamAndWidth()
+        {
+            String s = Sprintf.sprintf("%7$*5$x\n", 1, 2, 3, 4, 5, 6, 7);
+            Assert.AreEqual("    7\n", s);
+        }
+
+        [Test]
+        public void TestPositionalTrio()
+        {
+            String s = Sprintf.sprintf("%7$*6$.*5$x\n", 1, 2, 3, 4, 5, 6, 7);
+            Assert.AreEqual(" 00007\n", s);
+        }
     }
 }

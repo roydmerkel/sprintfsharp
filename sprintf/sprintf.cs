@@ -3417,7 +3417,6 @@ namespace sprintf
 
                                 break;
                             case 'n':
-                                /* TODO: write numWritten into the passed argument, find out how to pass in ref object. */
                                 if (!hasArg)
                                 {
                                     return null;

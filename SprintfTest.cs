@@ -32,11 +32,13 @@ namespace testsprintf
     {
 		private sprintf.GetObjAddrInterface oldInter;
 		private PercentPGetObjAddr mockInter;
+        private PercentPGetObjAddr2 mockInter2;
 
         public SprintfTest()
         {
 			oldInter = Sprintf.getAddrInter;
 			mockInter = new PercentPGetObjAddr();
+            mockInter2 = new PercentPGetObjAddr2();
         }
 
 		[SetUp]
@@ -2140,6 +2142,18 @@ namespace testsprintf
 			}
 		}
 
+        public class PercentPGetObjAddr2 : sprintf.GetObjAddrInterface
+        {
+            public PercentPGetObjAddr2()
+            {
+            }
+
+            public long getObjAddr(object arg)
+            {
+                return (long)arg;
+            }
+        }
+
         [Test]
         public void TestPercentP()
         {
@@ -2338,6 +2352,112 @@ namespace testsprintf
 		}
 
         [Test]
+        public void TestPercentNParams()
+        {
+            unsafe
+            {
+                int n = 0;
+                int* pn = &n;
+                IntPtr ip = new IntPtr(pn);
+
+                String s = Sprintf.sprintf("abc123%n\n", ip);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, n);
+            }
+
+            unsafe
+            {
+                uint n = 0;
+                uint* pn = &n;
+
+                UIntPtr ip = new UIntPtr(pn);
+
+                String s = Sprintf.sprintf("abc123%n\n", ip);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, n);
+            }
+
+            unsafe
+            {
+                int[] arr = new int[] { 0 };
+
+                String s = Sprintf.sprintf("abc123%n\n", arr);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, arr[0]);
+            }
+
+            unsafe
+            {
+                uint[] arr = new uint[] { 0 };
+
+                String s = Sprintf.sprintf("abc123%n\n", arr);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, arr[0]);
+            }
+
+            unsafe
+            {
+                long[] arr = new long[] { 0 };
+
+                String s = Sprintf.sprintf("abc123%n\n", arr);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, arr[0]);
+            }
+
+            unsafe
+            {
+                ulong[] arr = new ulong[] { 0 };
+
+                String s = Sprintf.sprintf("abc123%n\n", arr);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, arr[0]);
+            }
+
+            unsafe
+            {
+                Int32[] arr = new Int32[] { 0 };
+
+                String s = Sprintf.sprintf("abc123%n\n", arr);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, arr[0]);
+            }
+
+            unsafe
+            {
+                UInt32[] arr = new UInt32[] { 0 };
+
+                String s = Sprintf.sprintf("abc123%n\n", arr);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, arr[0]);
+            }
+
+            unsafe
+            {
+                Int64[] arr = new Int64[] { 0 };
+
+                String s = Sprintf.sprintf("abc123%n\n", arr);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, arr[0]);
+            }
+
+            unsafe
+            {
+                UInt64[] arr = new UInt64[] { 0 };
+
+                String s = Sprintf.sprintf("abc123%n\n", arr);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, arr[0]);
+            }
+
+            {
+                IntBox ib = new IntBox();
+                String s = Sprintf.sprintf("abc123%n\n", ib);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(6, ib.Int);
+            }
+        }
+
+        [Test]
         public void TestPercentChain()
         {
             String s = Sprintf.sprintf("%-+#'0*.*f%d\n", 20, 5, 1.0, 2500000);
@@ -2454,6 +2574,80 @@ namespace testsprintf
         {
             String s = Sprintf.sprintf("%7$*6$.*5$x\n", 1, 2, 3, 4, 5, 6, 7);
             Assert.AreEqual(" 00007\n", s);
+        }
+
+        [Test]
+        public void TestPositionalParamPercents()
+        {
+            String s = Sprintf.sprintf("%2$d\n", 1, 2, 3);
+            Assert.AreEqual("2\n", s);
+
+            s = Sprintf.sprintf("%2$u\n", 1, 2, 3);
+            Assert.AreEqual("2\n", s);
+
+            s = Sprintf.sprintf("%2$o\n", 1, 2, 3);
+            Assert.AreEqual("2\n", s);
+
+            s = Sprintf.sprintf("%2$x\n", 1, 2, 3);
+            Assert.AreEqual("2\n", s);
+
+            s = Sprintf.sprintf("%2$X\n", 1, 2, 3);
+            Assert.AreEqual("2\n", s);
+
+            s = Sprintf.sprintf("%2$f\n", 0.1, 0.2);
+            Assert.AreEqual(s, "0.200000\n");
+
+            s = Sprintf.sprintf("%2$F\n", 0.1, 0.2);
+            Assert.AreEqual(s, "0.200000\n");
+
+            s = Sprintf.sprintf("%2$e\n", 0.1, 0.2);
+            Assert.AreEqual(s, "2.000000e-01\n");
+
+            s = Sprintf.sprintf("%2$E\n", 0.1, 0.2);
+            Assert.AreEqual(s, "2.000000E-01\n");
+
+            s = Sprintf.sprintf("%2$g\n", 0.1, 0.2);
+            Assert.AreEqual(s, "0.2\n");
+
+            s = Sprintf.sprintf("%2$G\n", 0.1, 0.2);
+            Assert.AreEqual(s, "0.2\n");
+
+            s = Sprintf.sprintf("%2$.0a\n", 0.1, 0.2);
+            Assert.AreEqual(s, "0x2p-3\n");
+
+            s = Sprintf.sprintf("%2$.0A\n", 0.1, 0.2);
+            Assert.AreEqual(s, "0X2P-3\n");
+
+            s = Sprintf.sprintf("%2$s\n", "1", "2");
+            Assert.AreEqual(s, "2\n");
+
+            s = Sprintf.sprintf("%2$S\n", "1", "2");
+            Assert.AreEqual(s, "2\n");
+
+            s = Sprintf.sprintf("%2$c\n", '1', '2');
+            Assert.AreEqual(s, "2\n");
+
+            s = Sprintf.sprintf("%2$C\n", '1', '2');
+            Assert.AreEqual(s, "2\n");
+
+            Sprintf.getAddrInter = mockInter2;
+            s = Sprintf.sprintf("%2$p\n", 1L, 2L);
+            Assert.AreEqual(s, "0x2\n");
+
+            unsafe
+            {
+                int n = 0;
+                int n2 = 0;
+                int* pn = &n;
+                int* pn2 = &n2;
+                IntPtr ip = new IntPtr(pn);
+                IntPtr ip2 = new IntPtr(pn2);
+
+                s = Sprintf.sprintf("abc123%2$n\n", ip, ip2);
+                Assert.AreEqual("abc123\n", s);
+                Assert.AreEqual(0, n);
+                Assert.AreEqual(6, n2);
+            }
         }
     }
 }

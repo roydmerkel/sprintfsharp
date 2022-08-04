@@ -27,6 +27,20 @@ using System.Collections;
 
 namespace sprintf
 {
+    public class IntBox
+    {
+        private int i;
+
+        public IntBox() { this.i = 0; }
+        public IntBox(int i) { this.i = i; }
+
+        public int Int
+        {
+            get { return this.i; }
+            set { this.i = value; }
+        }
+    }
+
 	public interface GetObjAddrInterface
 	{
 		long getObjAddr(object arg);
@@ -3305,6 +3319,12 @@ namespace sprintf
                                         arg = argsIter.Current;
                                         hasArg = argsIter.MoveNext();
                                     }
+
+                                    if (arg == null)
+                                    {
+                                        return null;
+                                    }
+
 									intPtrVal = getAddrInter.getObjAddr(arg);
 
 									StringBuilder valStr;
@@ -3398,6 +3418,155 @@ namespace sprintf
                                 break;
                             case 'n':
                                 /* TODO: write numWritten into the passed argument, find out how to pass in ref object. */
+                                if (!hasArg)
+                                {
+                                    return null;
+                                }
+                                else
+                                {
+                                    object arg = null;
+                                    if (posParm > 0)
+                                    {
+                                        if (args.Length >= posParm)
+                                        {
+                                            arg = args[posParm - 1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        arg = argsIter.Current;
+                                        hasArg = argsIter.MoveNext();
+                                    }
+
+                                    if (arg == null)
+                                    {
+                                        return null;
+                                    }
+
+                                    Type type = arg.GetType();
+                                    if(type.Equals(typeof(IntPtr)))
+                                    {
+                                        IntPtr ptr = (IntPtr)arg;
+                                        Marshal.WriteInt32(ptr, numWritten);
+                                    }
+                                    else if (type.Equals(typeof(UIntPtr)))
+                                    {
+                                        UIntPtr ptr = (UIntPtr)arg;
+                                        IntPtr intPtr = (IntPtr)(int)ptr.ToUInt32();
+
+                                        Marshal.WriteInt32(intPtr, numWritten);
+                                    }
+                                    else if (type.Equals(typeof(Int32[])))
+                                    {
+                                        Int32[] ptr = (Int32[])arg;
+
+                                        if (ptr.Length > 0)
+                                        {
+                                            ptr[0] = numWritten;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
+                                    }
+                                    else if (type.Equals(typeof(UInt32[])))
+                                    {
+                                        UInt32[] ptr = (UInt32[])arg;
+
+                                        if (ptr.Length > 0)
+                                        {
+                                            ptr[0] = (uint)numWritten;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
+                                    }
+                                    else if (type.Equals(typeof(Int64[])))
+                                    {
+                                        Int64[] ptr = (Int64[])arg;
+
+                                        if (ptr.Length > 0)
+                                        {
+                                            ptr[0] = numWritten;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
+                                    }
+                                    else if (type.Equals(typeof(UInt64[])))
+                                    {
+                                        UInt64[] ptr = (UInt64[])arg;
+
+                                        if (ptr.Length > 0)
+                                        {
+                                            ptr[0] = (uint)numWritten;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
+                                    }
+                                    else if (type.Equals(typeof(int[])))
+                                    {
+                                        int[] ptr = (int[])arg;
+
+                                        if (ptr.Length > 0)
+                                        {
+                                            ptr[0] = numWritten;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
+                                    }
+                                    else if (type.Equals(typeof(uint[])))
+                                    {
+                                        uint[] ptr = (uint[])arg;
+
+                                        if (ptr.Length > 0)
+                                        {
+                                            ptr[0] = (uint)numWritten;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
+                                    }
+                                    else if (type.Equals(typeof(long[])))
+                                    {
+                                        long[] ptr = (long[])arg;
+
+                                        if (ptr.Length > 0)
+                                        {
+                                            ptr[0] = numWritten;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
+                                    }
+                                    else if (type.Equals(typeof(ulong[])))
+                                    {
+                                        ulong[] ptr = (ulong[])arg;
+
+                                        if (ptr.Length > 0)
+                                        {
+                                            ptr[0] = (ulong)numWritten;
+                                        }
+                                        else
+                                        {
+                                            return null;
+                                        }
+                                    }
+                                    else if (type.Equals(typeof(IntBox)))
+                                    {
+                                        IntBox ib = (IntBox)arg;
+                                        ib.Int = numWritten;
+                                    }
+                                }
+
                                 break;
                             case 'm':
                                 /* write strerror(errno) to buf, find out how to do this. */
